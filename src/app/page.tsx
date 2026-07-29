@@ -287,6 +287,23 @@ export default function InkResonancePage() {
   }, [])
 
   useEffect(() => {
+    if (!menuOpen) return
+
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
     if (!selectedEngagement) return
 
     const previousOverflow = document.body.style.overflow
@@ -628,7 +645,8 @@ export default function InkResonancePage() {
                         src={item.images[0]}
                         alt={item.event}
                         fill
-                        sizes="(max-width: 700px) 76vw, (max-width: 1100px) 40vw, 28vw"
+                        sizes="(max-width: 800px) 82vw, (max-width: 1100px) 40vw, 28vw"
+                        loading={index < 2 ? 'eager' : 'lazy'}
                       />
                     </span>
                     <span className={styles.memoirCaption}>

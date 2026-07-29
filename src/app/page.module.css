@@ -6026,3 +6026,672 @@
     padding: 0 12px;
   }
 }
+
+/* Cohesive mobile layout */
+@media (max-width: 800px) {
+  .site {
+    overflow-x: clip;
+  }
+
+  .header {
+    min-height: 68px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 0 18px;
+  }
+
+  .identity {
+    gap: 11px;
+  }
+
+  .identity strong {
+    font-size: 11px;
+    letter-spacing: .19em;
+  }
+
+  .brandDot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .menuButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobileNav {
+    position: fixed;
+    z-index: 120;
+    top: 68px;
+    bottom: 0;
+    height: calc(100dvh - 68px);
+    align-content: start;
+    overflow-y: auto;
+    background:
+      linear-gradient(180deg, rgba(31, 28, 24, .98), rgba(31, 28, 24, .96)),
+      var(--ink);
+    padding: 14px 22px 34px;
+    box-shadow: 0 24px 60px rgba(20, 16, 12, .24);
+  }
+
+  .mobileNav a {
+    min-height: 62px;
+    grid-template-columns: 38px 1fr;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  .hero {
+    display: block;
+    min-height: auto;
+    padding: 0 22px 52px;
+  }
+
+  .hero::after {
+    background:
+      linear-gradient(rgba(38, 59, 75, .035) 1px, transparent 1px);
+    background-size: 100% 8px;
+  }
+
+  .heroWords {
+    padding: 62px 0 30px;
+  }
+
+  .heroWords h1 {
+    width: 100%;
+    margin: 0 0 36px;
+    line-height: .88;
+  }
+
+  .heroWords h1::after {
+    width: 100%;
+    margin-top: 27px;
+  }
+
+  .heroName {
+    margin: 0 0 7px 1px;
+    font-size: clamp(42px, 13.5vw, 56px);
+    line-height: .9;
+  }
+
+  .heroInstrument {
+    max-width: 100%;
+    font-size: clamp(58px, 18.5vw, 76px);
+    line-height: .84;
+    letter-spacing: -.055em;
+    white-space: nowrap;
+  }
+
+  .heroTagline {
+    gap: 11px;
+    margin-top: 0;
+    font-size: 10.5px;
+    line-height: 1.75;
+    letter-spacing: .2em;
+  }
+
+  .heroStatement {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: 3px minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 34px;
+  }
+
+  .heroStatement > span {
+    min-height: 62px;
+  }
+
+  .heroStatement strong {
+    font-size: 10.5px;
+    line-height: 1.65;
+    letter-spacing: .14em;
+  }
+
+  .heroStatement p {
+    margin-top: 7px;
+    font-size: 10px;
+    line-height: 1.55;
+    letter-spacing: .13em;
+  }
+
+  .heroActions {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    margin-top: 34px;
+  }
+
+  .heroActions a {
+    min-height: 50px;
+    font-size: 9px;
+  }
+
+  .heroActions a:first-child {
+    min-width: 0;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  .heroPortraitFrame {
+    width: 100%;
+    grid-column: auto;
+    margin: 18px 0 14px;
+  }
+
+  .heroPortraitFrame::before {
+    right: 3%;
+    width: 66%;
+  }
+
+  .heroPortraitFrame::after {
+    right: -5%;
+    width: 22%;
+  }
+
+  .affiliations {
+    gap: 16px 22px;
+    padding: 28px 22px 30px;
+    font-size: 8px;
+    line-height: 1.65;
+    letter-spacing: .19em;
+  }
+
+  .story {
+    gap: 42px;
+    padding: 78px 22px 82px;
+  }
+
+  .storyHeadline h2 {
+    font-size: clamp(43px, 12.5vw, 56px);
+    line-height: .96;
+  }
+
+  .storyBody > p,
+  .practiceIntro > p,
+  .practiceGrid article > p,
+  .researchCopy > p,
+  .archiveHead > p,
+  .videosHead > p,
+  .mediaHead > p {
+    font-size: 15px;
+    line-height: 1.72;
+  }
+
+  .storyMeta {
+    margin-top: 28px;
+    padding-top: 20px;
+  }
+
+  .practiceIntro {
+    min-height: 0;
+    padding: 74px 22px 66px;
+  }
+
+  .practiceIntro h2 {
+    margin: 46px 0 22px;
+    font-size: clamp(46px, 13vw, 58px);
+  }
+
+  .practiceGrid article {
+    min-height: 0;
+    justify-content: flex-start;
+    border-right: 0;
+    border-bottom: 1px solid rgba(31, 28, 24, .16);
+    padding: 34px 22px 42px;
+  }
+
+  .practiceGrid article:last-child {
+    border-bottom: 0;
+  }
+
+  .practiceNumber {
+    position: static;
+    order: 0;
+    margin-bottom: 46px;
+  }
+
+  .practiceGrid article > svg {
+    position: static;
+    order: 1;
+    margin-bottom: 18px;
+  }
+
+  .practiceGrid h3 {
+    order: 2;
+    margin-bottom: 12px;
+    font-size: 34px;
+  }
+
+  .practiceGrid article > p {
+    min-height: 0;
+    order: 3;
+  }
+
+  .practiceGrid a {
+    order: 4;
+    margin-top: 25px;
+    font-size: 8px;
+  }
+
+  .research {
+    min-height: 0;
+    gap: 52px;
+    padding: 82px 22px 88px;
+  }
+
+  .researchCopy h2 {
+    margin: 31px 0 22px;
+    font-size: clamp(62px, 18vw, 78px);
+    line-height: .8;
+  }
+
+  .researchCopy h3 {
+    margin-bottom: 25px;
+    font-size: 18px;
+    line-height: 1.48;
+  }
+
+  .researchCopy > a {
+    margin-top: 20px;
+    font-size: 8px;
+  }
+
+  .researchPoster {
+    width: min(88vw, 350px);
+    justify-self: center;
+  }
+
+  .researchPoster > div {
+    width: 100%;
+  }
+
+  .researchPoster > span {
+    margin-top: 24px;
+  }
+
+  .researchDiagram {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .researchDiagram > span {
+    min-height: 82px;
+    align-items: center;
+    border: 1px solid rgba(31, 28, 24, .14);
+    padding: 12px 6px;
+    font-size: 34px;
+  }
+
+  .researchDiagram small {
+    margin-top: 8px;
+    font-size: 7px;
+    letter-spacing: .16em;
+  }
+
+  .archive {
+    padding: 86px 0 70px;
+  }
+
+  .archiveHead {
+    gap: 30px;
+    margin-bottom: 52px;
+    padding: 0 22px;
+  }
+
+  .archiveHead h2 {
+    max-width: 10ch;
+    font-size: clamp(49px, 14vw, 66px);
+    line-height: .88;
+  }
+
+  .memoirControls {
+    top: -48px;
+    right: 22px;
+  }
+
+  .memoirControls button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .memoirTrack {
+    min-height: 510px;
+    gap: 10px;
+    padding: 48px 48px 68px 22px;
+    scroll-padding-inline: 22px;
+    scroll-snap-type: x mandatory;
+    touch-action: pan-x;
+  }
+
+  .memoirCard + .memoirCard {
+    margin-left: 0;
+  }
+
+  .memoirCard,
+  .memoirCardWide {
+    flex-basis: min(82vw, 334px);
+  }
+
+  .memoirCardPortrait {
+    flex-basis: min(68vw, 278px);
+  }
+
+  .memoirCardTall {
+    flex-basis: min(62vw, 246px);
+  }
+
+  .memoirCaption {
+    width: calc(100% - 18px);
+    margin: -10px 9px 0;
+    padding: 13px 14px 15px;
+  }
+
+  .memoirCaption strong {
+    font-size: clamp(21px, 6.5vw, 27px);
+  }
+
+  .archiveCount {
+    margin: 0;
+    padding: 0 22px;
+    font-size: 7px;
+    line-height: 1.6;
+  }
+
+  .memoirModal {
+    padding: 12px;
+  }
+
+  .memoirModalPanel {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .memoirModalImage {
+    min-height: 42dvh;
+  }
+
+  .memoirModalCopy {
+    padding: 30px 22px 34px;
+  }
+
+  .videos {
+    padding: 86px 22px 94px;
+  }
+
+  .videosHead {
+    gap: 28px;
+    margin-bottom: 54px;
+  }
+
+  .videosHead h2 {
+    font-size: clamp(54px, 15.5vw, 72px);
+    line-height: .86;
+  }
+
+  .videoGrid {
+    gap: 42px;
+  }
+
+  .videoInfo {
+    gap: 8px;
+    padding-top: 13px;
+  }
+
+  .videoInfo h3 {
+    font-size: clamp(28px, 8.5vw, 38px);
+    line-height: 1;
+  }
+
+  .videoPlay {
+    width: 58px;
+    height: 58px;
+  }
+
+  .videoMore {
+    margin-top: 58px;
+  }
+
+  .videos .videoMore > summary {
+    min-height: 58px;
+    padding: 16px 18px;
+  }
+
+  .media {
+    padding: 88px 22px 96px;
+  }
+
+  .coverageLabel {
+    margin-bottom: 38px;
+  }
+
+  .coverageHead h2 {
+    max-width: 12ch;
+    font-size: clamp(41px, 11.5vw, 54px);
+    line-height: 1.02;
+  }
+
+  .coverageHead h2 br {
+    display: none;
+  }
+
+  .pressSwitcher {
+    margin-top: 42px;
+  }
+
+  .pressTabs {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(232px, 78vw);
+    grid-template-columns: none;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .pressTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pressTabs > label {
+    min-height: 136px;
+    align-content: start;
+    scroll-snap-align: start;
+    padding: 22px;
+  }
+
+  .pressLogo {
+    width: 126px;
+    height: 38px;
+  }
+
+  .pressTabs strong {
+    margin-top: 11px;
+    font-size: 10px;
+  }
+
+  .pressTabs small {
+    font-size: 11.5px;
+  }
+
+  .pressFeature {
+    gap: 35px;
+    margin-top: 24px;
+    padding-top: 22px;
+  }
+
+  .pressFeatureVideo {
+    aspect-ratio: 4 / 3;
+  }
+
+  .pressFeaturePortrait {
+    aspect-ratio: 4 / 5;
+  }
+
+  .pressFeatureCopy h3 {
+    margin: 12px 0;
+    font-size: 42px;
+  }
+
+  .pressFeatureCopy p {
+    font-size: 15px;
+    line-height: 1.72;
+  }
+
+  .pressVideoModal {
+    padding: 12px;
+  }
+
+  .pressVideoPanel {
+    width: 100%;
+  }
+
+  .pressVideoHead {
+    min-height: 54px;
+    padding: 0 10px 0 16px;
+    font-size: 8px;
+    letter-spacing: .16em;
+  }
+
+  .contact {
+    padding: 82px 22px 88px;
+  }
+
+  .contactTopline {
+    align-items: flex-start;
+    gap: 20px;
+    font-size: 6.5px;
+    line-height: 1.5;
+  }
+
+  .contactTopline span:last-child {
+    max-width: 22ch;
+    text-align: right;
+  }
+
+  .contact h2 {
+    margin: 56px 0 44px;
+    font-size: clamp(54px, 15vw, 70px);
+    line-height: .82;
+  }
+
+  .email {
+    gap: 13px;
+    padding: 19px 0;
+  }
+
+  .email span {
+    font-size: clamp(18px, 5.8vw, 25px);
+  }
+
+  .contactLower {
+    gap: 44px;
+    margin-top: 44px;
+  }
+
+  .contactDetails {
+    gap: 14px;
+  }
+
+  .contactDetails span {
+    font-size: 7.5px;
+    line-height: 1.5;
+  }
+
+  .qrList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .qrList > a {
+    min-width: 0;
+    padding: 8px 5px 10px;
+  }
+
+  .qrImage,
+  .qrList img {
+    width: min(100%, 82px);
+    height: auto;
+  }
+
+  .footer {
+    min-height: 0;
+    gap: 18px;
+    padding: 34px 22px 38px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero {
+    padding-inline: 18px;
+  }
+
+  .heroName {
+    font-size: 40px;
+  }
+
+  .heroInstrument {
+    font-size: 57px;
+  }
+
+  .heroActions {
+    grid-template-columns: 1fr;
+  }
+
+  .heroActions a:last-child {
+    justify-self: start;
+  }
+
+  .archiveHead,
+  .archiveCount {
+    padding-inline: 18px;
+  }
+
+  .memoirControls {
+    right: 18px;
+  }
+
+  .memoirTrack {
+    padding-right: 42px;
+    padding-left: 18px;
+    scroll-padding-inline: 18px;
+  }
+
+  .contactTopline span:last-child {
+    display: none;
+  }
+
+  .socialProfiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .practiceGrid article:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .practiceGrid article:hover > svg {
+    color: var(--red-bright);
+  }
+
+  .practiceGrid article:hover > p {
+    color: inherit;
+  }
+
+  .memoirCard:hover {
+    filter: none;
+  }
+
+  .videoGrid a:hover .videoThumb img {
+    transform: none;
+  }
+}
