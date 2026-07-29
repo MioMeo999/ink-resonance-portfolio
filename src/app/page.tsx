@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   BookOpen,
   CalendarDays,
+  Camera,
   ChevronLeft,
   ChevronRight,
   GraduationCap,
@@ -46,6 +47,19 @@ const socialLinks = [
     id: 'whatsapp',
     name: 'WhatsApp',
     qrCode: '/images/social/whatsapp-qr.jpg',
+  },
+]
+
+const socialProfiles = [
+  {
+    name: 'Instagram',
+    href: 'https://www.instagram.com/miolijun999/',
+    icon: Camera,
+  },
+  {
+    name: 'YouTube',
+    href: 'https://www.youtube.com/@lijun6',
+    icon: Play,
   },
 ]
 
@@ -171,6 +185,9 @@ export default function InkResonancePage() {
   const archiveTrackRef = useRef<HTMLDivElement>(null)
   const archiveScrollTargetRef = useRef(0)
   const archiveAnimationRef = useRef<number | null>(null)
+  const archivePointerIntentRef = useRef(0)
+  const archiveVelocityRef = useRef(0)
+  const archivePointerActiveRef = useRef(false)
 
   const featuredVideos = performanceVideos.filter((video) => video.featured)
   const additionalVideos = performanceVideos.filter((video) => !video.featured)
@@ -193,45 +210,74 @@ export default function InkResonancePage() {
     })
   }
 
-  const animateArchiveToPointer = () => {
+  const animateArchiveFromPointer = () => {
     const track = archiveTrackRef.current
     if (!track) {
       archiveAnimationRef.current = null
       return
     }
 
-    const distance = archiveScrollTargetRef.current - track.scrollLeft
-    if (Math.abs(distance) < .35) {
-      track.scrollLeft = archiveScrollTargetRef.current
+    const targetVelocity = archivePointerActiveRef.current
+      ? archivePointerIntentRef.current * 2.25
+      : 0
+
+    archiveVelocityRef.current += (targetVelocity - archiveVelocityRef.current) * .032
+
+    if (Math.abs(targetVelocity) < .012 && Math.abs(archiveVelocityRef.current) < .012) {
+      archiveVelocityRef.current = 0
       archiveAnimationRef.current = null
       return
     }
 
-    track.scrollLeft += distance * .075
-    archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveToPointer)
+    const maxScroll = track.scrollWidth - track.clientWidth
+    const nextScroll = Math.min(
+      maxScroll,
+      Math.max(0, track.scrollLeft + archiveVelocityRef.current)
+    )
+
+    track.scrollLeft = nextScroll
+
+    const pressingBoundary =
+      (nextScroll <= 0 && targetVelocity < 0) ||
+      (nextScroll >= maxScroll && targetVelocity > 0)
+
+    if (pressingBoundary) {
+      archiveVelocityRef.current = 0
+      archiveAnimationRef.current = null
+      return
+    }
+
+    archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveFromPointer)
   }
 
-  const handleArchivePointerEnter = () => {
-    const track = archiveTrackRef.current
-    if (track) archiveScrollTargetRef.current = track.scrollLeft
+  const startArchivePointerAnimation = () => {
+    if (archiveAnimationRef.current === null) {
+      archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveFromPointer)
+    }
   }
 
-  const handleArchivePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+  const updateArchivePointerIntent = (event: ReactPointerEvent<HTMLDivElement>) => {
     const track = archiveTrackRef.current
     if (!track || event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return
     }
 
-    const maxScroll = track.scrollWidth - track.clientWidth
-    const pointerDelta = Math.max(-24, Math.min(24, event.movementX))
-    archiveScrollTargetRef.current = Math.min(
-      maxScroll,
-      Math.max(0, archiveScrollTargetRef.current + pointerDelta * .62)
-    )
+    const bounds = track.getBoundingClientRect()
+    const pointerPosition = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width))
+    const centeredPosition = pointerPosition * 2 - 1
+    const deadZone = .2
+    const activeDistance = Math.max(0, (Math.abs(centeredPosition) - deadZone) / (1 - deadZone))
 
-    if (archiveAnimationRef.current === null) {
-      archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveToPointer)
-    }
+    archivePointerIntentRef.current =
+      Math.sign(centeredPosition) * Math.pow(activeDistance, 1.75)
+    archivePointerActiveRef.current = true
+    startArchivePointerAnimation()
+  }
+
+  const handleArchivePointerLeave = () => {
+    archivePointerActiveRef.current = false
+    archivePointerIntentRef.current = 0
+    startArchivePointerAnimation()
   }
 
   useEffect(() => () => {
@@ -549,8 +595,9 @@ export default function InkResonancePage() {
               ref={archiveTrackRef}
               tabIndex={0}
               aria-label="Activity memoir, newest to oldest"
-              onPointerEnter={handleArchivePointerEnter}
-              onPointerMove={handleArchivePointerMove}
+              onPointerEnter={updateArchivePointerIntent}
+              onPointerMove={updateArchivePointerIntent}
+              onPointerLeave={handleArchivePointerLeave}
             >
               {sortedEngagements.map((item, index) => {
                 const isPortrait = portraitArchiveImages.has(item.images[0])
@@ -861,6 +908,24 @@ export default function InkResonancePage() {
             <div className={styles.contactDetails}>
               <span><MapPin size={15} /> Leeds, United Kingdom</span>
               <span><CalendarDays size={15} /> Available for selected projects</span>
+              <div className={styles.socialProfiles} aria-label="Social media profiles">
+                {socialProfiles.map((profile) => {
+                  const SocialIcon = profile.icon
+                  return (
+                    <a
+                      href={profile.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit Lijun Zhang on ${profile.name}`}
+                      key={profile.name}
+                    >
+                      <SocialIcon size={17} />
+                      <span>{profile.name}</span>
+                      <ArrowUpRight size={13} />
+                    </a>
+                  )
+                })}
+              </div>
             </div>
             <div className={styles.qrList}>
               {socialLinks.map((social) => (
