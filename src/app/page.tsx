@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import {
   ArrowDown,
@@ -19,7 +19,6 @@ import {
 import {
   performanceVideos,
   pressItems,
-  type PressItem,
 } from '@/data/portfolioMedia'
 import { engagementArchive } from '@/data/portfolioEngagements'
 import styles from './page.module.css'
@@ -42,22 +41,40 @@ const socialLinks = [
   },
 ]
 
-type SocialLink = (typeof socialLinks)[number]
-
 const formatEngagementDate = (date: string) => {
   const [year, month, day] = date.split('-')
   return `${day}.${month}.${year.slice(2)}`
 }
 
 const navItems = [
-  { href: '#story', label: 'Story' },
-  { href: '#practice', label: 'Practice' },
+  { href: '#story', label: 'About' },
+  { href: '#practice', label: 'Approach' },
   { href: '#research', label: 'Research' },
-  { href: '#archive', label: 'Archive' },
-  { href: '#videos', label: 'Videos' },
-  { href: '#media', label: 'Media' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#archive', label: 'Engagements' },
+  { href: '#videos', label: 'Watch' },
+  { href: '#media', label: 'Press' },
 ]
+
+const pressNotes: Record<string, { eyebrow: string; description: string; note: string }> = {
+  CCTV: {
+    eyebrow: 'China Central Television · Broadcast',
+    description:
+      'China’s national broadcaster featured Guzheng performance and UK–China cultural exchange work as part of its coverage of Chinese cultural activity overseas.',
+    note: 'Broadcast segment',
+  },
+  "People's Daily": {
+    eyebrow: 'People’s Daily Overseas Edition · 21 August 2025',
+    description:
+      'Print coverage of performances and community cultural work in the United Kingdom, including collaborations with schools and community organisations.',
+    note: 'Overseas edition · August 2025',
+  },
+  CGTN: {
+    eyebrow: 'CGTN Europe · October 2025',
+    description:
+      'A Mid-Autumn feature exploring Chinese cultural celebration, music, and friendship between communities in Manchester.',
+    note: 'Mid-Autumn feature · October 2025',
+  },
+}
 
 function ModernImage({
   src,
@@ -88,48 +105,21 @@ function ModernImage({
 
 export default function InkResonancePage() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [showAllEngagements, setShowAllEngagements] = useState(false)
-  const [showAllVideos, setShowAllVideos] = useState(false)
-  const [selectedPress, setSelectedPress] = useState<PressItem | null>(null)
-  const [selectedSocial, setSelectedSocial] = useState<SocialLink | null>(null)
 
   const featuredVideos = performanceVideos.filter((video) => video.featured)
-  const visibleVideos = showAllVideos ? performanceVideos : featuredVideos
+  const additionalVideos = performanceVideos.filter((video) => !video.featured)
   const sortedEngagements = [...engagementArchive].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
-  const visibleEngagements = showAllEngagements
-    ? sortedEngagements
-    : sortedEngagements.slice(0, 6)
-
-  useEffect(() => {
-    if (!selectedPress && !selectedSocial) return
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedPress(null)
-        setSelectedSocial(null)
-      }
-    }
-
-    window.addEventListener('keydown', handleEscape)
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      window.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = ''
-    }
-  }, [selectedPress, selectedSocial])
+  const selectedEngagements = sortedEngagements.slice(0, 6)
+  const additionalEngagements = sortedEngagements.slice(6)
 
   return (
     <div className={styles.site}>
       <header className={styles.header}>
         <a href="#home" className={styles.identity} aria-label="Lijun Zhang, home">
-          <span className={styles.seal}>LZ</span>
-          <span>
-            <strong>LIJUN<br />ZHANG</strong>
-            <small>Guzheng artist · Researcher</small>
-          </span>
+          <span className={styles.brandDot} aria-hidden="true" />
+          <strong>LIJUN ZHANG</strong>
         </a>
 
         <nav className={styles.desktopNav} aria-label="Primary navigation">
@@ -139,7 +129,7 @@ export default function InkResonancePage() {
         </nav>
 
         <a href="#contact" className={styles.headerCta}>
-          Collaborate <ArrowUpRight size={15} />
+          Invite me to play <ArrowUpRight size={15} />
         </a>
 
         <button
@@ -165,36 +155,26 @@ export default function InkResonancePage() {
 
       <main>
         <section id="home" className={styles.hero}>
-          <div className={styles.heroBackdrop} aria-hidden="true">
-            <Image
-              src="/images/bg-home.jpg"
-              alt=""
-              fill
-              sizes="100vw"
-              priority
-            />
-          </div>
-
           <div className={styles.heroIndex}>
-            <span>ISSUE 01 / 2026</span>
-            <span>LEEDS · UNITED KINGDOM</span>
+            <span>PORTFOLIO · 2026</span>
+            <span>LISTEN · MEET · RESONATE</span>
           </div>
 
           <div className={styles.heroWords}>
-            <p>Guzheng · Leeds, United Kingdom</p>
-            <h1>
-              Ancient strings.
-              <em>New worlds.</em>
-            </h1>
+            <h1>GUZHENG</h1>
+            <div className={styles.heroTagline}>
+              <span>Performing across Britain.</span>
+              <span>Researching how music makes belonging.</span>
+            </div>
             <div className={styles.heroStatement}>
-              <span className={styles.miniSeal}>21<br />STRINGS</span>
-              <p>
-                I use the Guzheng to create meaningful connections across
-                cultures, communities, and generations.
-              </p>
+              <span aria-hidden="true" />
+              <div>
+                <strong>LIJUN ZHANG</strong>
+                <p>Guzheng artist · PhD candidate, University of Leeds</p>
+              </div>
             </div>
             <div className={styles.heroActions}>
-              <a href="#archive">Experience the work</a>
+              <a href="#archive">Twenty-two rooms</a>
               <a href="#videos"><Play size={11} fill="currentColor" /> Listen</a>
             </div>
           </div>
@@ -211,16 +191,32 @@ export default function InkResonancePage() {
           </div>
 
           <div className={styles.heroSideNote} aria-hidden="true">
-            <span>GZ</span>
-            <span>Sound / Place / Belonging</span>
+            <span />
+            <span>Portfolio · 2026 — Listen · Meet · Resonate</span>
           </div>
 
-          <a href="#story" className={styles.scrollCue}>
-            Enter the story <ArrowDown size={16} />
-          </a>
+          <a href="#story" className={styles.scrollCue}>Explore <ArrowDown size={16} /></a>
         </section>
 
+        <div className={styles.affiliations} aria-label="Selected media and institutional associations">
+          <span>Featured by</span>
+          <a href="#media">CCTV</a>
+          <a href="#media">People&apos;s Daily</a>
+          <a href="#media">CGTN</a>
+          <a href="#research">University of Leeds</a>
+          <a href="#archive">Business Confucius Institute</a>
+          <a href="#research">Healthy Buildings Network</a>
+        </div>
+
         <section id="story" className={styles.story}>
+          <div className={styles.storyBackdrop} aria-hidden="true">
+            <Image
+              src="/images/bg-home.jpg"
+              alt=""
+              fill
+              sizes="100vw"
+            />
+          </div>
           <div className={styles.sectionMarker}>
             <span>01</span>
             <p>POSITION / STORY</p>
@@ -361,7 +357,7 @@ export default function InkResonancePage() {
           </div>
 
           <div className={styles.archiveGrid}>
-            {visibleEngagements.map((item, index) => (
+            {selectedEngagements.map((item, index) => (
               <a
                 href={item.link || '#archive'}
                 target="_blank"
@@ -387,17 +383,38 @@ export default function InkResonancePage() {
             ))}
           </div>
 
-          <button
-            type="button"
-            className={styles.archiveToggle}
-            onClick={() => setShowAllEngagements((value) => !value)}
-            aria-expanded={showAllEngagements}
-          >
-            {showAllEngagements
-              ? 'Return to selected activities'
-              : `View the complete activity archive · ${engagementArchive.length}`}
-            <span>{showAllEngagements ? '−' : '+'}</span>
-          </button>
+          <details className={styles.archiveMore}>
+            <summary>
+              View the complete activity archive · {engagementArchive.length}
+              <span aria-hidden="true">+</span>
+            </summary>
+            <div className={styles.archiveGrid}>
+              {additionalEngagements.map((item, index) => (
+                <a
+                  href={item.link || '#archive'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.archiveCard}
+                  key={item.id}
+                >
+                  <ModernImage
+                    src={item.images[0]}
+                    alt={item.event}
+                    className={styles.archiveImage}
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                  />
+                  <div className={styles.archiveMeta}>
+                    <span>{String(index + selectedEngagements.length + 1).padStart(2, '0')}</span>
+                    <span>{formatEngagementDate(item.date)}</span>
+                    <ArrowUpRight size={15} />
+                  </div>
+                  <p>{item.tags.join(' · ')}</p>
+                  <h3>{item.event}</h3>
+                  <small>{item.venue}</small>
+                </a>
+              ))}
+            </div>
+          </details>
         </section>
 
         <section id="videos" className={styles.videos}>
@@ -417,20 +434,23 @@ export default function InkResonancePage() {
             </p>
           </div>
 
-          <div className={`${styles.videoGrid} ${showAllVideos ? styles.videoGridExpanded : ''}`}>
-            {visibleVideos.map((video, index) => (
+          <div className={styles.videoGrid}>
+            {featuredVideos.map((video, index) => (
               <a
                 key={video.id}
                 href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={index === 0 && !showAllVideos ? styles.videoLead : ''}
+                className={index === 0 ? styles.videoLead : ''}
               >
                 <div className={styles.videoThumb}>
                   <img
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                    src={`https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`}
                     alt=""
                     loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.src = `https://i.ytimg.com/vi/${video.youtubeId}/sddefault.jpg`
+                    }}
                   />
                   <span className={styles.videoWash} aria-hidden="true" />
                   <span className={styles.videoPlay}><Play size={18} fill="currentColor" /></span>
@@ -445,81 +465,163 @@ export default function InkResonancePage() {
             ))}
           </div>
 
-          <button
-            type="button"
-            className={styles.videoToggle}
-            onClick={() => setShowAllVideos((value) => !value)}
-            aria-expanded={showAllVideos}
-          >
-            {showAllVideos ? 'Show selected videos' : `View the complete collection · ${performanceVideos.length}`}
-            <span>{showAllVideos ? '−' : '+'}</span>
-          </button>
+          <details className={styles.videoMore}>
+            <summary>
+              View the complete collection · {performanceVideos.length}
+              <span aria-hidden="true">+</span>
+            </summary>
+            <div className={`${styles.videoGrid} ${styles.videoGridExpanded}`}>
+              {additionalVideos.map((video, index) => (
+                <a
+                  key={video.id}
+                  href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className={styles.videoThumb}>
+                    <img
+                      src={`https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                      alt=""
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.src = `https://i.ytimg.com/vi/${video.youtubeId}/sddefault.jpg`
+                      }}
+                    />
+                    <span className={styles.videoPlay}><Play size={18} fill="currentColor" /></span>
+                    <span className={styles.videoIndex}>
+                      {String(index + featuredVideos.length + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+                  <div className={styles.videoInfo}>
+                    <span>{video.category}</span>
+                    <h3>{video.title}</h3>
+                    <small>Watch on YouTube <ArrowUpRight size={13} /></small>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </details>
         </section>
 
         <section id="media" className={styles.media}>
-          <div className={styles.mediaHead}>
-            <div className={styles.sectionMarker}>
-              <span>06</span>
-              <p>MEDIA &amp; PRESS</p>
+          <div className={`${styles.mediaHead} ${styles.coverageHead}`}>
+            <div className={styles.coverageLabel}>
+              <span aria-hidden="true" />
+              <p>COVERAGE</p>
             </div>
-            <div>
-              <span>Independent coverage</span>
-              <h2>Stories carried<br /><em>beyond the stage.</em></h2>
-            </div>
-            <p>
-              Broadcasts and editorial coverage from international media.
-              Select a story to view the original feature.
-            </p>
+            <h2>Covered by international media, and by<br />the institutions I work alongside.</h2>
           </div>
 
-          <div className={styles.mediaGrid}>
-            {pressItems.map((item, index) => {
-              const preview = item.posterUrl || item.screenshotUrl
-              return (
-                <button
-                  type="button"
+          <div className={styles.pressSwitcher}>
+            {pressItems.map((item, index) => (
+              <input
+                className={styles.pressControl}
+                type="radio"
+                name="press-story"
+                id={`press-control-${item.id}`}
+                defaultChecked={index === 0}
+                key={`control-${item.id}`}
+              />
+            ))}
+            <div className={styles.pressTabs} aria-label="Media coverage">
+              {pressItems.map((item) => (
+                <label
+                  htmlFor={`press-control-${item.id}`}
                   key={item.id}
-                  onClick={() => setSelectedPress(item)}
-                  aria-label={`Open ${item.name} media coverage`}
                 >
-                  <div className={styles.mediaPreview}>
-                    {preview && (
-                      <Image
-                        src={preview}
-                        alt=""
-                        fill
-                        sizes="(max-width: 800px) 100vw, 33vw"
-                      />
+                  <span className={styles.pressLogo}>
+                    <Image
+                      src={item.logoUrl}
+                      alt={`${item.name} logo`}
+                      fill
+                      sizes="220px"
+                    />
+                  </span>
+                  <strong>{item.name}</strong>
+                  <small>{pressNotes[item.name].note}</small>
+                </label>
+              ))}
+            </div>
+
+            <div className={styles.pressPanels}>
+              {pressItems.map((item) => (
+                <section className={styles.pressFeature} id={`press-${item.id}`} key={item.id}>
+                  <div className={`${styles.pressFeatureVisual} ${item.id === '2' ? styles.pressFeaturePortrait : ''}`}>
+                    {item.posterUrl || item.screenshotUrl ? (
+                      item.videoUrl ? (
+                        <a
+                          className={styles.pressVideoTrigger}
+                          href={`#press-video-${item.id}`}
+                          aria-label={`Play ${item.name} coverage video`}
+                        >
+                          <Image
+                            src={item.posterUrl || item.screenshotUrl || ''}
+                            alt={`${item.name} coverage preview`}
+                            fill
+                            sizes="(max-width: 800px) 100vw, 48vw"
+                          />
+                          <span><Play size={18} fill="currentColor" /></span>
+                        </a>
+                      ) : (
+                        <Image
+                          src={item.posterUrl || item.screenshotUrl || ''}
+                          alt={`${item.name} coverage preview`}
+                          fill
+                          sizes="(max-width: 800px) 100vw, 48vw"
+                        />
+                      )
+                    ) : null}
+                  </div>
+                  <div className={styles.pressFeatureCopy}>
+                    <span>{pressNotes[item.name].eyebrow}</span>
+                    <h3>{item.name}</h3>
+                    <p>{pressNotes[item.name].description}</p>
+                    {item.link ? (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Read the coverage <ArrowUpRight size={15} />
+                      </a>
+                    ) : (
+                      <span className={styles.pressUnavailable}>
+                        Broadcast only — no online article
+                      </span>
                     )}
-                    <span>0{index + 1}</span>
                   </div>
-                  <div className={styles.mediaBrand}>
-                    <div>
-                      <Image
-                        src={item.logoUrl}
-                        alt={`${item.name} logo`}
-                        fill
-                        sizes="180px"
-                      />
-                    </div>
-                    <span>{item.videoUrl ? 'Broadcast coverage' : 'Editorial feature'}</span>
-                  </div>
-                  <div className={styles.mediaAction}>
-                    <strong>{item.name}</strong>
-                    <span>Open coverage <ArrowUpRight size={14} /></span>
-                  </div>
-                </button>
-              )
-            })}
+                </section>
+              ))}
+            </div>
           </div>
 
-          <div className={styles.mediaStatement}>
-            <span>PRESS NOTE</span>
-            <p>
-              Media coverage documents the public reach of the work. Performance
-              videos above remain the primary artistic archive.
-            </p>
-          </div>
+          {pressItems.filter((item) => item.videoUrl).map((item) => (
+            <div
+              className={styles.pressVideoModal}
+              id={`press-video-${item.id}`}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${item.name} coverage video`}
+              key={`video-${item.id}`}
+            >
+              <a
+                className={styles.pressVideoBackdrop}
+                href={`#press-${item.id}`}
+                aria-label="Close video"
+              />
+              <div className={styles.pressVideoPanel}>
+                <div className={styles.pressVideoHead}>
+                  <span>{item.name} · Coverage clip</span>
+                  <a href={`#press-${item.id}`} aria-label="Close video">
+                    <X size={20} />
+                  </a>
+                </div>
+                <video controls playsInline poster={item.posterUrl || item.screenshotUrl}>
+                  <source src={item.videoUrl} />
+                </video>
+              </div>
+            </div>
+          ))}
         </section>
 
         <section id="contact" className={styles.contact}>
@@ -541,10 +643,9 @@ export default function InkResonancePage() {
             </div>
             <div className={styles.qrList}>
               {socialLinks.map((social) => (
-                <button
-                  type="button"
+                <a
+                  href={`#qr-${social.id}`}
                   key={social.id}
-                  onClick={() => setSelectedSocial(social)}
                   aria-label={`Enlarge ${social.name} QR code`}
                 >
                   <span className={styles.qrImage}>
@@ -557,102 +658,45 @@ export default function InkResonancePage() {
                   </span>
                   <span>{social.name}</span>
                   <small>Tap to enlarge</small>
-                </button>
+                </a>
               ))}
             </div>
           </div>
         </section>
       </main>
 
-      {selectedPress && (
-        <div className={styles.mediaModal} role="dialog" aria-modal="true" aria-label={`${selectedPress.name} coverage`}>
-          <button
-            type="button"
-            className={styles.mediaBackdrop}
-            onClick={() => setSelectedPress(null)}
-            aria-label="Close media coverage"
-          />
-          <div className={styles.mediaModalPanel}>
-            <div className={styles.mediaModalHead}>
-              <div>
-                <span>MEDIA / {selectedPress.id.padStart(2, '0')}</span>
-                <strong>{selectedPress.name}</strong>
-              </div>
-              <button type="button" onClick={() => setSelectedPress(null)} aria-label="Close">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className={styles.mediaModalContent}>
-              {selectedPress.videoUrl ? (
-                <video
-                  src={selectedPress.videoUrl}
-                  poster={selectedPress.posterUrl}
-                  controls
-                  playsInline
-                  preload="metadata"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              ) : selectedPress.screenshotUrl ? (
-                <Image
-                  src={selectedPress.screenshotUrl}
-                  alt={`${selectedPress.name} coverage`}
-                  width={1400}
-                  height={1000}
-                  unoptimized
-                />
-              ) : null}
-            </div>
-
-            <div className={styles.mediaModalFoot}>
-              <span>International media coverage</span>
-              {selectedPress.link && (
-                <a href={selectedPress.link} target="_blank" rel="noopener noreferrer">
-                  View original story <ArrowUpRight size={15} />
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {selectedSocial && (
+      {socialLinks.map((social) => (
         <div
           className={styles.qrModal}
+          id={`qr-${social.id}`}
           role="dialog"
           aria-modal="true"
-          aria-label={`${selectedSocial.name} QR code`}
+          aria-label={`${social.name} QR code`}
+          key={social.id}
         >
-          <button
-            type="button"
-            className={styles.mediaBackdrop}
-            onClick={() => setSelectedSocial(null)}
-            aria-label="Close QR code"
-          />
+          <a href="#contact" className={styles.mediaBackdrop} aria-label="Close QR code" />
           <div className={styles.qrModalPanel}>
             <div className={styles.qrModalHead}>
               <div>
-                <span>CONNECT / {selectedSocial.id.toUpperCase()}</span>
-                <strong>{selectedSocial.name}</strong>
+                <span>CONNECT / {social.id.toUpperCase()}</span>
+                <strong>{social.name}</strong>
               </div>
-              <button type="button" onClick={() => setSelectedSocial(null)} aria-label="Close">
+              <a href="#contact" aria-label="Close">
                 <X size={20} />
-              </button>
+              </a>
             </div>
             <div className={styles.qrModalImage}>
               <Image
-                src={selectedSocial.qrCode}
-                alt={`Enlarged ${selectedSocial.name} QR code`}
+                src={social.qrCode}
+                alt={`Enlarged ${social.name} QR code`}
                 width={420}
                 height={420}
-                priority
               />
             </div>
             <p>Scan with your phone camera</p>
           </div>
         </div>
-      )}
+      ))}
 
       <footer className={styles.footer}>
         <a href="#home" className={styles.footerIdentity}>

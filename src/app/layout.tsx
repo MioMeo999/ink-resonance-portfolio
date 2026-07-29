@@ -1,16 +1,25 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Archivo, Cormorant_Garamond, Jost } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({
+const structureSans = Jost({
   subsets: ['latin'],
+  weight: ['300', '400', '500'],
   variable: '--font-inter',
   display: 'swap',
 })
 
-const playfair = Playfair_Display({
+const displaySerif = Cormorant_Garamond({
   subsets: ['latin'],
+  weight: ['300'],
   variable: '--font-playfair',
+  display: 'swap',
+})
+
+const bodySans = Archivo({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-archivo',
   display: 'swap',
 })
 
@@ -38,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${structureSans.variable} ${displaySerif.variable} ${bodySans.variable}`}>
       <body>{children}</body>
     </html>
   )
