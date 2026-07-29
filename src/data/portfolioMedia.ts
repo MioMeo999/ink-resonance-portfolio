@@ -2,6 +2,7 @@ export type PerformanceVideo = {
   id: string
   title: string
   youtubeId: string
+  thumbnailUrl?: string
   category: 'Solo' | 'Ensemble' | 'Cross-Cultural' | 'Shorts'
   featured: boolean
 }
@@ -22,13 +23,6 @@ export const performanceVideos: PerformanceVideo[] = [
     featured: true,
   },
   {
-    id: '3',
-    title: 'Guzheng | Bai Suzhen at the Foot of Mount Qingcheng',
-    youtubeId: 'RfXDqO6S0Lo',
-    category: 'Solo',
-    featured: true,
-  },
-  {
     id: '4',
     title: 'Ensemble of Folk Chinese Instruments',
     youtubeId: 'r_z4RZtPSLE',
@@ -36,9 +30,17 @@ export const performanceVideos: PerformanceVideo[] = [
     featured: true,
   },
   {
+    id: '3',
+    title: 'Guzheng | Bai Suzhen at the Foot of Mount Qingcheng',
+    youtubeId: 'RfXDqO6S0Lo',
+    category: 'Solo',
+    featured: true,
+  },
+  {
     id: '5',
     title: 'Guzheng + Piano | Liuyang River',
     youtubeId: 'FyOBZPbyq5s',
+    thumbnailUrl: '/images/videos/liuyang-river.jpg',
     category: 'Solo',
     featured: false,
   },

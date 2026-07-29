@@ -1,12 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
 import Image from 'next/image'
 import {
   ArrowDown,
   ArrowUpRight,
   BookOpen,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   GraduationCap,
   Mail,
   MapPin,
@@ -76,6 +84,60 @@ const pressNotes: Record<string, { eyebrow: string; description: string; note: s
   },
 }
 
+const describeEngagement = (tags: string[]) => {
+  const hasWorkshop = tags.includes('workshop')
+  const hasPerformance = tags.includes('performance')
+  const hasCommunity = tags.includes('community')
+
+  if (hasWorkshop && hasPerformance && hasCommunity) {
+    return 'Performance, participation and community exchange brought together in one shared cultural programme.'
+  }
+
+  if (hasWorkshop && hasPerformance) {
+    return 'A participatory encounter moving between live performance, demonstration and shared learning.'
+  }
+
+  if (hasPerformance && hasCommunity) {
+    return 'A live musical gathering shaped around celebration, cultural connection and a shared audience.'
+  }
+
+  if (hasWorkshop && hasCommunity) {
+    return 'An open learning space connecting traditional music with conversation, participation and community.'
+  }
+
+  if (hasWorkshop) {
+    return 'A hands-on session exploring sound, tradition and the social possibilities of making music together.'
+  }
+
+  return 'A live guzheng performance presented as part of an evolving, research-led artistic practice.'
+}
+
+const portraitArchiveImages = new Set([
+  '/images/timeline/wu-fest-acoustic-2025.jpg',
+  '/images/timeline/harrogate-grammar-school-2025.jpg',
+  '/images/timeline/york-resident-festival-2026.jpg',
+  '/images/timeline/world-unite-acoustic-2025.jpg',
+  '/images/timeline/sonic-belonging-2026.jpg',
+  '/images/timeline/silk-road-workshop-2026.jpg',
+])
+
+const wideArchiveImages = new Set([
+  '/images/timeline/lihua-school-awards-2024.jpg',
+  '/images/timeline/wu-fest-teaser-2025.jpg',
+  '/images/timeline/york-spring-gala-2026.jpg',
+  '/images/timeline/lccs-summer-fair-2025.jpg',
+  '/images/timeline/leeds-chinese-new-year-2026.jpg',
+  '/images/timeline/lubs-global-impact-day-2026.jpeg',
+  '/images/timeline/dragon-new-year-2024-leeds.jpg',
+])
+
+const tallArchiveImages = new Set([
+  '/images/timeline/wu-fest-acoustic-2025.jpg',
+])
+
+const memoirTilts = [-2.4, 1.5, -.8, 2.1, -1.4, .9]
+const memoirOffsets = [24, 2, 38, 12, 30, 0]
+
 function ModernImage({
   src,
   alt,
@@ -105,14 +167,128 @@ function ModernImage({
 
 export default function InkResonancePage() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [selectedEngagement, setSelectedEngagement] = useState<(typeof engagementArchive)[number] | null>(null)
+  const archiveTrackRef = useRef<HTMLDivElement>(null)
+  const archiveScrollTargetRef = useRef(0)
+  const archiveAnimationRef = useRef<number | null>(null)
 
   const featuredVideos = performanceVideos.filter((video) => video.featured)
   const additionalVideos = performanceVideos.filter((video) => !video.featured)
   const sortedEngagements = [...engagementArchive].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
-  const selectedEngagements = sortedEngagements.slice(0, 6)
-  const additionalEngagements = sortedEngagements.slice(6)
+  const scrollArchive = (direction: -1 | 1) => {
+    const track = archiveTrackRef.current
+    if (!track) return
+
+    const maxScroll = track.scrollWidth - track.clientWidth
+    archiveScrollTargetRef.current = Math.min(
+      maxScroll,
+      Math.max(0, track.scrollLeft + direction * track.clientWidth * .72)
+    )
+
+    track.scrollTo({
+      left: archiveScrollTargetRef.current,
+      behavior: 'smooth',
+    })
+  }
+
+  const animateArchiveToPointer = () => {
+    const track = archiveTrackRef.current
+    if (!track) {
+      archiveAnimationRef.current = null
+      return
+    }
+
+    const distance = archiveScrollTargetRef.current - track.scrollLeft
+    if (Math.abs(distance) < .35) {
+      track.scrollLeft = archiveScrollTargetRef.current
+      archiveAnimationRef.current = null
+      return
+    }
+
+    track.scrollLeft += distance * .075
+    archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveToPointer)
+  }
+
+  const handleArchivePointerEnter = () => {
+    const track = archiveTrackRef.current
+    if (track) archiveScrollTargetRef.current = track.scrollLeft
+  }
+
+  const handleArchivePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const track = archiveTrackRef.current
+    if (!track || event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
+
+    const maxScroll = track.scrollWidth - track.clientWidth
+    const pointerDelta = Math.max(-24, Math.min(24, event.movementX))
+    archiveScrollTargetRef.current = Math.min(
+      maxScroll,
+      Math.max(0, archiveScrollTargetRef.current + pointerDelta * .62)
+    )
+
+    if (archiveAnimationRef.current === null) {
+      archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveToPointer)
+    }
+  }
+
+  useEffect(() => () => {
+    if (archiveAnimationRef.current !== null) {
+      window.cancelAnimationFrame(archiveAnimationRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!selectedEngagement) return
+
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedEngagement(null)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [selectedEngagement])
+
+  useEffect(() => {
+    const stopInactivePressVideos = () => {
+      const activeModalId = window.location.hash.slice(1)
+
+      document.querySelectorAll<HTMLVideoElement>('video[data-press-video]').forEach((video) => {
+        const modal = video.closest<HTMLElement>('[role="dialog"]')
+        if (modal?.id === activeModalId) return
+
+        video.pause()
+        video.currentTime = 0
+      })
+    }
+
+    const closePressVideoOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !window.location.hash.startsWith('#press-video-')) return
+
+      const pressId = window.location.hash.replace('#press-video-', '')
+      window.location.hash = `press-${pressId}`
+    }
+
+    stopInactivePressVideos()
+    window.addEventListener('hashchange', stopInactivePressVideos)
+    window.addEventListener('keydown', closePressVideoOnEscape)
+
+    return () => {
+      window.removeEventListener('hashchange', stopInactivePressVideos)
+      window.removeEventListener('keydown', closePressVideoOnEscape)
+      document.querySelectorAll<HTMLVideoElement>('video[data-press-video]').forEach((video) => {
+        video.pause()
+      })
+    }
+  }, [])
 
   return (
     <div className={styles.site}>
@@ -161,7 +337,10 @@ export default function InkResonancePage() {
           </div>
 
           <div className={styles.heroWords}>
-            <h1>GUZHENG</h1>
+            <h1>
+              <span className={styles.heroName}>Lijun Zhang</span>
+              <span className={styles.heroInstrument}>GUZHENG</span>
+            </h1>
             <div className={styles.heroTagline}>
               <span>Performing across Britain.</span>
               <span>Researching how music makes belonging.</span>
@@ -169,7 +348,7 @@ export default function InkResonancePage() {
             <div className={styles.heroStatement}>
               <span aria-hidden="true" />
               <div>
-                <strong>LIJUN ZHANG</strong>
+                <strong>ARTIST · RESEARCHER · CULTURAL CONNECTOR</strong>
                 <p>Guzheng artist · PhD candidate, University of Leeds</p>
               </div>
             </div>
@@ -349,72 +528,78 @@ export default function InkResonancePage() {
               <span>04</span>
               <p>ACTIVITY ARCHIVE</p>
             </div>
-            <h2>Shared moments,<br /><em>made through sound.</em></h2>
+            <h2>Rooms remembered,<br /><em>in sound and colour.</em></h2>
             <p>
-              The complete record of performances, workshops, collaborations,
-              and community activity from the original portfolio.
+              A travelling memoir of performances, workshops, collaborations,
+              and the people encountered along the way.
             </p>
           </div>
 
-          <div className={styles.archiveGrid}>
-            {selectedEngagements.map((item, index) => (
-              <a
-                href={item.link || '#archive'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.archiveCard}
-                key={item.id}
-              >
-                <ModernImage
-                  src={item.images[0]}
-                  alt={item.event}
-                  className={styles.archiveImage}
-                  sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                />
-                <div className={styles.archiveMeta}>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <span>{formatEngagementDate(item.date)}</span>
-                  <ArrowUpRight size={15} />
-                </div>
-                <p>{item.tags.join(' · ')}</p>
-                <h3>{item.event}</h3>
-                <small>{item.venue}</small>
-              </a>
-            ))}
-          </div>
-
-          <details className={styles.archiveMore}>
-            <summary>
-              View the complete activity archive · {engagementArchive.length}
-              <span aria-hidden="true">+</span>
-            </summary>
-            <div className={styles.archiveGrid}>
-              {additionalEngagements.map((item, index) => (
-                <a
-                  href={item.link || '#archive'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.archiveCard}
-                  key={item.id}
-                >
-                  <ModernImage
-                    src={item.images[0]}
-                    alt={item.event}
-                    className={styles.archiveImage}
-                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                  />
-                  <div className={styles.archiveMeta}>
-                    <span>{String(index + selectedEngagements.length + 1).padStart(2, '0')}</span>
-                    <span>{formatEngagementDate(item.date)}</span>
-                    <ArrowUpRight size={15} />
-                  </div>
-                  <p>{item.tags.join(' · ')}</p>
-                  <h3>{item.event}</h3>
-                  <small>{item.venue}</small>
-                </a>
-              ))}
+          <div className={styles.memoirWall}>
+            <div className={styles.memoirControls} aria-label="Memoir wall controls">
+              <button type="button" onClick={() => scrollArchive(-1)} aria-label="Earlier in the timeline">
+                <ChevronLeft size={18} />
+              </button>
+              <button type="button" onClick={() => scrollArchive(1)} aria-label="Later in the timeline">
+                <ChevronRight size={18} />
+              </button>
             </div>
-          </details>
+            <div
+              className={styles.memoirTrack}
+              ref={archiveTrackRef}
+              tabIndex={0}
+              aria-label="Activity memoir, newest to oldest"
+              onPointerEnter={handleArchivePointerEnter}
+              onPointerMove={handleArchivePointerMove}
+            >
+              {sortedEngagements.map((item, index) => {
+                const isPortrait = portraitArchiveImages.has(item.images[0])
+                const isWide = wideArchiveImages.has(item.images[0])
+                const isTall = tallArchiveImages.has(item.images[0])
+                const cardStyle = {
+                  '--memoir-tilt': `${memoirTilts[index % memoirTilts.length]}deg`,
+                  '--memoir-lift': `${memoirOffsets[index % memoirOffsets.length]}px`,
+                } as CSSProperties
+
+                return (
+                  <button
+                    type="button"
+                    className={[
+                      styles.memoirCard,
+                      isPortrait ? styles.memoirCardPortrait : '',
+                      isWide ? styles.memoirCardWide : '',
+                      isTall ? styles.memoirCardTall : '',
+                    ].filter(Boolean).join(' ')}
+                    style={cardStyle}
+                    onClick={() => setSelectedEngagement(item)}
+                    key={item.id}
+                    aria-label={`Open memory: ${item.event}`}
+                  >
+                    <span className={styles.memoirPin} aria-hidden="true" />
+                    <span className={styles.memoirPhoto}>
+                      <Image
+                        src={item.images[0]}
+                        alt={item.event}
+                        fill
+                        sizes="(max-width: 700px) 76vw, (max-width: 1100px) 40vw, 28vw"
+                      />
+                    </span>
+                    <span className={styles.memoirCaption}>
+                      <span className={styles.memoirMetaRow}>
+                        <time dateTime={item.date}>{formatEngagementDate(item.date)}</time>
+                        <span>{String(index + 1).padStart(2, '0')}</span>
+                      </span>
+                      <strong>{item.event}</strong>
+                      <small><MapPin size={11} />{item.venue}</small>
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          <p className={styles.archiveCount}>
+            {engagementArchive.length} engagements · February 2024—June 2026
+          </p>
         </section>
 
         <section id="videos" className={styles.videos}>
@@ -445,11 +630,12 @@ export default function InkResonancePage() {
               >
                 <div className={styles.videoThumb}>
                   <img
-                    src={`https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                    src={video.thumbnailUrl || `https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`}
                     alt=""
                     loading="lazy"
                     onError={(event) => {
-                      event.currentTarget.src = `https://i.ytimg.com/vi/${video.youtubeId}/sddefault.jpg`
+                      event.currentTarget.onerror = null
+                      event.currentTarget.src = `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`
                     }}
                   />
                   <span className={styles.videoWash} aria-hidden="true" />
@@ -480,11 +666,12 @@ export default function InkResonancePage() {
                 >
                   <div className={styles.videoThumb}>
                     <img
-                      src={`https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                      src={video.thumbnailUrl || `https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`}
                       alt=""
                       loading="lazy"
                       onError={(event) => {
-                        event.currentTarget.src = `https://i.ytimg.com/vi/${video.youtubeId}/sddefault.jpg`
+                        event.currentTarget.onerror = null
+                        event.currentTarget.src = `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`
                       }}
                     />
                     <span className={styles.videoPlay}><Play size={18} fill="currentColor" /></span>
@@ -546,7 +733,13 @@ export default function InkResonancePage() {
             <div className={styles.pressPanels}>
               {pressItems.map((item) => (
                 <section className={styles.pressFeature} id={`press-${item.id}`} key={item.id}>
-                  <div className={`${styles.pressFeatureVisual} ${item.id === '2' ? styles.pressFeaturePortrait : ''}`}>
+                  <div
+                    className={[
+                      styles.pressFeatureVisual,
+                      item.videoUrl ? styles.pressFeatureVideo : styles.pressFeatureEditorial,
+                      item.id === '2' ? styles.pressFeaturePortrait : '',
+                    ].filter(Boolean).join(' ')}
+                  >
                     {item.posterUrl || item.screenshotUrl ? (
                       item.videoUrl ? (
                         <a
@@ -556,21 +749,44 @@ export default function InkResonancePage() {
                         >
                           <Image
                             src={item.posterUrl || item.screenshotUrl || ''}
+                            alt=""
+                            aria-hidden="true"
+                            fill
+                            className={styles.pressVisualBackdrop}
+                            sizes="(max-width: 800px) 100vw, 48vw"
+                          />
+                          <Image
+                            src={item.posterUrl || item.screenshotUrl || ''}
                             alt={`${item.name} coverage preview`}
                             fill
+                            className={styles.pressVisualSubject}
                             sizes="(max-width: 800px) 100vw, 48vw"
                           />
                           <span><Play size={18} fill="currentColor" /></span>
                         </a>
                       ) : (
-                        <Image
-                          src={item.posterUrl || item.screenshotUrl || ''}
-                          alt={`${item.name} coverage preview`}
-                          fill
-                          sizes="(max-width: 800px) 100vw, 48vw"
-                        />
+                        <>
+                          <Image
+                            src={item.posterUrl || item.screenshotUrl || ''}
+                            alt=""
+                            aria-hidden="true"
+                            fill
+                            className={styles.pressVisualBackdrop}
+                            sizes="(max-width: 800px) 100vw, 48vw"
+                          />
+                          <Image
+                            src={item.posterUrl || item.screenshotUrl || ''}
+                            alt={`${item.name} coverage preview`}
+                            fill
+                            className={styles.pressVisualSubject}
+                            sizes="(max-width: 800px) 100vw, 48vw"
+                          />
+                        </>
                       )
                     ) : null}
+                    <span className={styles.pressVisualLabel}>
+                      {item.videoUrl ? 'Broadcast film' : 'Print edition'}
+                    </span>
                   </div>
                   <div className={styles.pressFeatureCopy}>
                     <span>{pressNotes[item.name].eyebrow}</span>
@@ -616,7 +832,12 @@ export default function InkResonancePage() {
                     <X size={20} />
                   </a>
                 </div>
-                <video controls playsInline poster={item.posterUrl || item.screenshotUrl}>
+                <video
+                  controls
+                  playsInline
+                  poster={item.posterUrl || item.screenshotUrl}
+                  data-press-video={item.id}
+                >
                   <source src={item.videoUrl} />
                 </video>
               </div>
@@ -664,6 +885,48 @@ export default function InkResonancePage() {
           </div>
         </section>
       </main>
+
+      {selectedEngagement && (
+        <div className={styles.memoirModal} role="dialog" aria-modal="true" aria-label={selectedEngagement.event}>
+          <button
+            type="button"
+            className={styles.memoirModalBackdrop}
+            onClick={() => setSelectedEngagement(null)}
+            aria-label="Close memory"
+          />
+          <div className={styles.memoirModalPanel}>
+            <button
+              type="button"
+              className={styles.memoirModalClose}
+              onClick={() => setSelectedEngagement(null)}
+              aria-label="Close memory"
+            >
+              <X size={19} />
+            </button>
+            <div className={styles.memoirModalImage}>
+              <Image
+                src={selectedEngagement.images[0]}
+                alt={selectedEngagement.event}
+                fill
+                sizes="(max-width: 800px) 92vw, 56vw"
+              />
+            </div>
+            <div className={styles.memoirModalCopy}>
+              <span>
+                {formatEngagementDate(selectedEngagement.date)} · {selectedEngagement.tags.join(' · ')}
+              </span>
+              <h3>{selectedEngagement.event}</h3>
+              <p>{describeEngagement(selectedEngagement.tags)}</p>
+              <small>{selectedEngagement.venue}</small>
+              {selectedEngagement.link && (
+                <a href={selectedEngagement.link} target="_blank" rel="noopener noreferrer">
+                  Read the full event <ArrowUpRight size={15} />
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {socialLinks.map((social) => (
         <div
