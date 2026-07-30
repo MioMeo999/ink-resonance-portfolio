@@ -666,14 +666,49 @@
   transform: translate(18px, 18px) rotate(1.5deg);
 }
 
-.researchPoster > div {
+.researchPoster > a {
   position: relative;
+  display: block;
   width: min(100%, 350px);
   aspect-ratio: .475;
   border: 1px solid rgba(255, 255, 255, .22);
   background: #171d20;
   box-shadow: 0 28px 72px rgba(0, 0, 0, .36);
   transform: rotate(-2deg);
+}
+
+.researchPoster > a:focus-visible {
+  outline: 1px solid var(--red);
+  outline-offset: 8px;
+}
+
+.researchPosterAction {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  background: rgba(31, 28, 24, .86);
+  padding: 0 12px;
+  color: var(--paper);
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: 7px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  backdrop-filter: blur(8px);
+  transition:
+    background .35s ease,
+    transform .55s cubic-bezier(.16, 1, .3, 1);
+}
+
+.researchPoster > a:hover .researchPosterAction,
+.researchPoster > a:focus-visible .researchPosterAction {
+  background: var(--red);
+  transform: translate(-2px, -2px);
 }
 
 .researchPoster img {
@@ -4077,7 +4112,7 @@
   filter: blur(1px);
 }
 
-.researchPoster > div {
+.researchPoster > a {
   box-shadow:
     0 35px 70px rgba(53, 42, 33, .2),
     0 10px 24px rgba(53, 42, 33, .12);
@@ -5266,7 +5301,7 @@
   display: none;
 }
 
-.researchPoster > div {
+.researchPoster > a {
   box-shadow:
     0 24px 58px rgba(53, 42, 33, .13),
     0 5px 14px rgba(53, 42, 33, .07);
@@ -6304,7 +6339,7 @@
     justify-self: center;
   }
 
-  .researchPoster > div {
+  .researchPoster > a {
     width: 100%;
   }
 

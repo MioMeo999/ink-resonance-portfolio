@@ -63,6 +63,9 @@ const socialProfiles = [
   },
 ]
 
+const researchReportUrl =
+  'https://www.healthybuildingsnetwork.org/blog/sonic-belonging.html'
+
 const formatEngagementDate = (date: string) => {
   const [year, month, day] = date.split('-')
   return `${day}.${month}.${year.slice(2)}`
@@ -538,7 +541,12 @@ export default function InkResonancePage() {
 
         <section id="research" className={styles.research}>
           <div className={styles.researchPoster}>
-            <div>
+            <a
+              href={researchReportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Read the Sonic Belonging project report"
+            >
               <Image
                 src="/images/research/sonic-belonging-poster.png"
                 alt="Sonic Belonging project report poster"
@@ -546,7 +554,10 @@ export default function InkResonancePage() {
                 sizes="(max-width: 800px) 75vw, 27vw"
                 loading="eager"
               />
-            </div>
+              <span className={styles.researchPosterAction}>
+                Read report <ArrowUpRight size={13} />
+              </span>
+            </a>
             <span>Field report · 2026</span>
           </div>
 
@@ -570,7 +581,7 @@ export default function InkResonancePage() {
               connected.
             </p>
             <a
-              href="https://www.healthybuildingsnetwork.org/blog/sonic-belonging.html"
+              href={researchReportUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
