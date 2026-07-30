@@ -13,9 +13,9 @@ import {
   ArrowUpRight,
   BookOpen,
   CalendarDays,
-  Camera,
   ChevronLeft,
   ChevronRight,
+  createLucideIcon,
   GraduationCap,
   Mail,
   MapPin,
@@ -31,6 +31,17 @@ import {
 } from '@/data/portfolioMedia'
 import { engagementArchive } from '@/data/portfolioEngagements'
 import styles from './page.module.css'
+
+const Instagram = createLucideIcon('Instagram', [
+  ['rect', { width: '20', height: '20', x: '2', y: '2', rx: '5', ry: '5', key: 'instagram-frame' }],
+  ['path', { d: 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z', key: 'instagram-lens' }],
+  ['line', { x1: '17.5', x2: '17.51', y1: '6.5', y2: '6.5', key: 'instagram-dot' }],
+])
+
+const Youtube = createLucideIcon('Youtube', [
+  ['path', { d: 'M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17', key: 'youtube-frame' }],
+  ['path', { d: 'm10 15 5-3-5-3z', key: 'youtube-play' }],
+])
 
 const socialLinks = [
   {
@@ -54,12 +65,12 @@ const socialProfiles = [
   {
     name: 'Instagram',
     href: 'https://www.instagram.com/miolijun999/',
-    icon: Camera,
+    icon: Instagram,
   },
   {
     name: 'YouTube',
     href: 'https://www.youtube.com/@lijun6',
-    icon: Play,
+    icon: Youtube,
   },
 ]
 
@@ -887,12 +898,12 @@ export default function InkResonancePage() {
             </div>
           </div>
 
+          {/* Future accessibility: replace the CSS :target press and QR overlays with native dialog elements using showModal() for focus trapping, Escape handling, and clean history. */}
           {pressItems.filter((item) => item.videoUrl).map((item) => (
             <div
               className={styles.pressVideoModal}
               id={`press-video-${item.id}`}
               role="dialog"
-              aria-modal="true"
               aria-label={`${item.name} coverage video`}
               key={`video-${item.id}`}
             >
@@ -1027,7 +1038,6 @@ export default function InkResonancePage() {
           className={styles.qrModal}
           id={`qr-${social.id}`}
           role="dialog"
-          aria-modal="true"
           aria-label={`${social.name} QR code`}
           key={social.id}
         >

@@ -14,7 +14,7 @@ body {
 
 body {
   min-width: 320px;
-  font-family: var(--font-archivo), Arial, sans-serif;
+  font-family: var(--font-body), Arial, sans-serif;
 }
 
 button,

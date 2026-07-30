@@ -5,28 +5,28 @@ import './globals.css'
 const structureSans = Jost({
   subsets: ['latin'],
   weight: ['300', '400', '500'],
-  variable: '--font-inter',
+  variable: '--font-sans',
   display: 'swap',
 })
 
 const displaySerif = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300'],
-  variable: '--font-playfair',
+  variable: '--font-display',
   display: 'swap',
 })
 
 const bodySans = Archivo({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
-  variable: '--font-archivo',
+  variable: '--font-body',
   display: 'swap',
 })
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#101416',
+  themeColor: '#f4efe7',
 }
 
 export const metadata: Metadata = {
