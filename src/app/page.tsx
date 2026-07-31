@@ -2,10 +2,7 @@
 
 import {
   useEffect,
-  useRef,
   useState,
-  type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
 } from 'react'
 import Image from 'next/image'
 import {
@@ -13,8 +10,6 @@ import {
   ArrowUpRight,
   BookOpen,
   CalendarDays,
-  ChevronLeft,
-  ChevronRight,
   createLucideIcon,
   GraduationCap,
   Mail,
@@ -163,8 +158,43 @@ const tallArchiveImages = new Set([
   '/images/timeline/wu-fest-acoustic-2025.jpg',
 ])
 
-const memoirTilts = [-2.4, 1.5, -.8, 2.1, -1.4, .9]
-const memoirOffsets = [24, 2, 38, 12, 30, 0]
+const archiveAnchorIds = new Set([
+  'dragon-boat-festival-2026',
+  'summer-celebration-2026',
+  'sonic-belonging-2026',
+  '6',
+  '8',
+  '12',
+])
+
+const archiveFeatureIds = new Set([
+  '19',
+  '2',
+  '9',
+  '11',
+  '13',
+  '18',
+])
+
+const archiveMobileWideIds = new Set([
+  'dragon-boat-festival-2026',
+  '6',
+  '8',
+  '12',
+  '18',
+])
+
+const archiveImagePositions: Record<string, string> = {
+  'dragon-boat-festival-2026': 'center 44%',
+  'summer-celebration-2026': 'center 46%',
+  'sonic-belonging-2026': 'center 30%',
+  '19': 'center 30%',
+  '6': 'center 42%',
+  '8': 'center 42%',
+  '9': 'center 30%',
+  '12': 'center 44%',
+  '13': 'center 28%',
+}
 
 function ModernImage({
   src,
@@ -196,109 +226,75 @@ function ModernImage({
 export default function InkResonancePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedEngagement, setSelectedEngagement] = useState<(typeof engagementArchive)[number] | null>(null)
-  const archiveTrackRef = useRef<HTMLDivElement>(null)
-  const archiveScrollTargetRef = useRef(0)
-  const archiveAnimationRef = useRef<number | null>(null)
-  const archivePointerIntentRef = useRef(0)
-  const archiveVelocityRef = useRef(0)
-  const archivePointerActiveRef = useRef(false)
 
   const featuredVideos = performanceVideos.filter((video) => video.featured)
   const additionalVideos = performanceVideos.filter((video) => !video.featured)
   const sortedEngagements = [...engagementArchive].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
-  const scrollArchive = (direction: -1 | 1) => {
-    const track = archiveTrackRef.current
-    if (!track) return
+  const archivePreviewItems = sortedEngagements.slice(0, 9)
+  const archiveRemainingItems = sortedEngagements.slice(9)
 
-    const maxScroll = track.scrollWidth - track.clientWidth
-    archiveScrollTargetRef.current = Math.min(
-      maxScroll,
-      Math.max(0, track.scrollLeft + direction * track.clientWidth * .72)
+  const renderArchiveMemoirCard = (
+    item: (typeof engagementArchive)[number],
+    index: number,
+  ) => {
+    const isPortrait = portraitArchiveImages.has(item.images[0])
+    const isWide = wideArchiveImages.has(item.images[0])
+    const isTall = tallArchiveImages.has(item.images[0])
+
+    return (
+      <article
+        className={[
+          styles.archiveMemoirCard,
+          isPortrait ? styles.archiveMemoirCardPortrait : '',
+          isWide ? styles.archiveMemoirCardWide : '',
+          isTall ? styles.archiveMemoirCardTall : '',
+          archiveAnchorIds.has(item.id) ? styles.archiveMemoirCardAnchor : '',
+          archiveFeatureIds.has(item.id) ? styles.archiveMemoirCardFeature : '',
+          archiveMobileWideIds.has(item.id) ? styles.archiveMemoirCardMobileWide : '',
+        ].filter(Boolean).join(' ')}
+        key={item.id}
+      >
+        <span className={styles.archiveMemoirPin} aria-hidden="true" />
+        <a
+          href={item.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.archiveMemoirPhoto}
+          aria-label={`Read the report for ${item.event}`}
+        >
+          <Image
+            src={item.images[0]}
+            alt={item.event}
+            fill
+            sizes="(max-width: 560px) 88vw, (max-width: 800px) 48vw, (max-width: 1050px) 42vw, 31vw"
+            loading={index < 6 ? 'eager' : 'lazy'}
+            style={{ objectPosition: archiveImagePositions[item.id] ?? 'center' }}
+          />
+          <span className={styles.archiveReportCue}>
+            Read report <ArrowUpRight size={12} />
+          </span>
+        </a>
+        <button
+          type="button"
+          className={styles.archiveMemoirCaption}
+          onClick={() => setSelectedEngagement(item)}
+          aria-label={`Open memory details: ${item.event}`}
+        >
+          <span className={styles.archiveMemoirMeta}>
+            <time dateTime={item.date}>{formatEngagementDate(item.date)}</time>
+            <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          </span>
+          <span className={styles.archiveMemoirType}>{item.tags.join(' · ')}</span>
+          <strong>{item.event}</strong>
+          <span className={styles.archiveMemoirLocation}>
+            <MapPin size={12} />{item.venue}
+          </span>
+        </button>
+      </article>
     )
-
-    track.scrollTo({
-      left: archiveScrollTargetRef.current,
-      behavior: 'smooth',
-    })
   }
-
-  const animateArchiveFromPointer = () => {
-    const track = archiveTrackRef.current
-    if (!track) {
-      archiveAnimationRef.current = null
-      return
-    }
-
-    const targetVelocity = archivePointerActiveRef.current
-      ? archivePointerIntentRef.current * 2.25
-      : 0
-
-    archiveVelocityRef.current += (targetVelocity - archiveVelocityRef.current) * .032
-
-    if (Math.abs(targetVelocity) < .012 && Math.abs(archiveVelocityRef.current) < .012) {
-      archiveVelocityRef.current = 0
-      archiveAnimationRef.current = null
-      return
-    }
-
-    const maxScroll = track.scrollWidth - track.clientWidth
-    const nextScroll = Math.min(
-      maxScroll,
-      Math.max(0, track.scrollLeft + archiveVelocityRef.current)
-    )
-
-    track.scrollLeft = nextScroll
-
-    const pressingBoundary =
-      (nextScroll <= 0 && targetVelocity < 0) ||
-      (nextScroll >= maxScroll && targetVelocity > 0)
-
-    if (pressingBoundary) {
-      archiveVelocityRef.current = 0
-      archiveAnimationRef.current = null
-      return
-    }
-
-    archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveFromPointer)
-  }
-
-  const startArchivePointerAnimation = () => {
-    if (archiveAnimationRef.current === null) {
-      archiveAnimationRef.current = window.requestAnimationFrame(animateArchiveFromPointer)
-    }
-  }
-
-  const updateArchivePointerIntent = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const track = archiveTrackRef.current
-    if (!track || event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return
-    }
-
-    const bounds = track.getBoundingClientRect()
-    const pointerPosition = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width))
-    const centeredPosition = pointerPosition * 2 - 1
-    const deadZone = .2
-    const activeDistance = Math.max(0, (Math.abs(centeredPosition) - deadZone) / (1 - deadZone))
-
-    archivePointerIntentRef.current =
-      Math.sign(centeredPosition) * Math.pow(activeDistance, 1.75)
-    archivePointerActiveRef.current = true
-    startArchivePointerAnimation()
-  }
-
-  const handleArchivePointerLeave = () => {
-    archivePointerActiveRef.current = false
-    archivePointerIntentRef.current = 0
-    startArchivePointerAnimation()
-  }
-
-  useEffect(() => () => {
-    if (archiveAnimationRef.current !== null) {
-      window.cancelAnimationFrame(archiveAnimationRef.current)
-    }
-  }, [])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -620,73 +616,26 @@ export default function InkResonancePage() {
             </p>
           </div>
 
-          <div className={styles.memoirWall}>
-            <div className={styles.memoirControls} aria-label="Memoir wall controls">
-              <button type="button" onClick={() => scrollArchive(-1)} aria-label="Earlier in the timeline">
-                <ChevronLeft size={18} />
-              </button>
-              <button type="button" onClick={() => scrollArchive(1)} aria-label="Later in the timeline">
-                <ChevronRight size={18} />
-              </button>
-            </div>
-            <div
-              className={styles.memoirTrack}
-              ref={archiveTrackRef}
-              tabIndex={0}
-              aria-label="Activity memoir, newest to oldest"
-              onPointerEnter={updateArchivePointerIntent}
-              onPointerMove={updateArchivePointerIntent}
-              onPointerLeave={handleArchivePointerLeave}
-            >
-              {sortedEngagements.map((item, index) => {
-                const isPortrait = portraitArchiveImages.has(item.images[0])
-                const isWide = wideArchiveImages.has(item.images[0])
-                const isTall = tallArchiveImages.has(item.images[0])
-                const cardStyle = {
-                  '--memoir-tilt': `${memoirTilts[index % memoirTilts.length]}deg`,
-                  '--memoir-lift': `${memoirOffsets[index % memoirOffsets.length]}px`,
-                } as CSSProperties
-
-                return (
-                  <button
-                    type="button"
-                    className={[
-                      styles.memoirCard,
-                      isPortrait ? styles.memoirCardPortrait : '',
-                      isWide ? styles.memoirCardWide : '',
-                      isTall ? styles.memoirCardTall : '',
-                    ].filter(Boolean).join(' ')}
-                    style={cardStyle}
-                    onClick={() => setSelectedEngagement(item)}
-                    key={item.id}
-                    aria-label={`Open memory: ${item.event}`}
-                  >
-                    <span className={styles.memoirPin} aria-hidden="true" />
-                    <span className={styles.memoirPhoto}>
-                      <Image
-                        src={item.images[0]}
-                        alt={item.event}
-                        fill
-                        sizes="(max-width: 800px) 82vw, (max-width: 1100px) 40vw, 28vw"
-                        loading={index < 2 ? 'eager' : 'lazy'}
-                      />
-                    </span>
-                    <span className={styles.memoirCaption}>
-                      <span className={styles.memoirMetaRow}>
-                        <time dateTime={item.date}>{formatEngagementDate(item.date)}</time>
-                        <span>{String(index + 1).padStart(2, '0')}</span>
-                      </span>
-                      <strong>{item.event}</strong>
-                      <small><MapPin size={11} />{item.venue}</small>
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
+          <div className={styles.archiveMemoirGrid} aria-label="Activity archive, newest to oldest">
+            {archivePreviewItems.map(renderArchiveMemoirCard)}
           </div>
-          <p className={styles.archiveCount}>
-            {engagementArchive.length} engagements · February 2024—June 2026
-          </p>
+          <details className={styles.archiveMore}>
+            <summary>
+              View the complete memoir · {engagementArchive.length}
+              <span aria-hidden="true">+</span>
+            </summary>
+            <div className={`${styles.archiveMemoirGrid} ${styles.archiveMemoirGridMore}`}>
+              {archiveRemainingItems.map((item, index) => (
+                renderArchiveMemoirCard(item, index + archivePreviewItems.length)
+              ))}
+            </div>
+          </details>
+          <div className={styles.archiveFooter}>
+            <p className={styles.archiveCount}>
+              {engagementArchive.length} engagements · February 2024—June 2026
+            </p>
+            <p>Performance · Workshops · Community</p>
+          </div>
         </section>
 
         <section id="videos" className={styles.videos}>
@@ -783,7 +732,7 @@ export default function InkResonancePage() {
               <span aria-hidden="true" />
               <p>COVERAGE</p>
             </div>
-            <h2>Covered by international media, and by<br />the institutions I work alongside.</h2>
+            <h2>Covered by international media, and by the institutions I work alongside.</h2>
           </div>
 
           <div className={styles.pressSwitcher}>

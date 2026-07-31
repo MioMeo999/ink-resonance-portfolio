@@ -23,6 +23,17 @@
   text-decoration: none;
 }
 
+.hero,
+.story,
+.practice,
+.research,
+.archive,
+.videos,
+.media,
+.contact {
+  scroll-margin-top: 104px;
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -1885,94 +1896,50 @@
   }
 }
 
-/* Travelling memoir wall */
-.memoirWall {
+/* Chronological scrapbook grid */
+.archiveMemoirGrid {
   position: relative;
-  isolation: isolate;
-  margin-top: 8px;
-}
-
-.memoirControls {
-  position: absolute;
-  top: -58px;
-  right: 0;
-  z-index: 8;
-  display: flex;
-  gap: 8px;
-}
-
-.memoirControls button {
   display: grid;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border: 1px solid rgba(31, 28, 24, .24);
-  border-radius: 50%;
-  background: rgba(244, 239, 231, .86);
-  color: var(--ink);
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition:
-    border-color .3s ease,
-    background .3s ease,
-    color .3s ease,
-    transform .5s cubic-bezier(.16, 1, .3, 1);
+  grid-auto-flow: dense;
+  grid-auto-rows: 8px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: start;
+  column-gap: clamp(18px, 2.2vw, 36px);
+  row-gap: 8px;
+  isolation: isolate;
+  padding: clamp(34px, 3vw, 48px) 8px 18px;
 }
 
-.memoirControls button:hover,
-.memoirControls button:focus-visible {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  outline: none;
-  transform: translateY(-2px);
-}
-
-.memoirTrack {
-  position: relative;
-  display: flex;
-  min-height: 610px;
-  align-items: flex-start;
-  gap: clamp(12px, 1.4vw, 24px);
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  padding: 68px max(6vw, 90px) 86px 36px;
-  scroll-behavior: smooth;
-  scroll-padding-inline: 36px;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-
-.memoirTrack::-webkit-scrollbar {
-  display: none;
-}
-
-.memoirTrack::before {
+.archiveMemoirGrid::before {
   position: absolute;
-  z-index: -1;
-  top: 47%;
+  top: 6px;
   right: 0;
   left: 0;
   height: 1px;
-  background:
-    linear-gradient(90deg, rgba(174, 45, 35, .82), rgba(174, 45, 35, .3) 72%, transparent);
-  box-shadow: 0 1px 7px rgba(174, 45, 35, .1);
+  background: linear-gradient(90deg, var(--red), rgba(174, 45, 35, .22) 44%, transparent 90%);
   content: '';
+  opacity: .72;
 }
 
-.memoirTrack:focus-visible {
-  outline: 1px solid rgba(174, 45, 35, .38);
-  outline-offset: 8px;
+.archiveMemoirGrid::after {
+  position: absolute;
+  z-index: -1;
+  inset: 16% 4% 8%;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(174, 45, 35, .055), transparent 25%),
+    radial-gradient(circle at 82% 46%, rgba(31, 28, 24, .045), transparent 29%);
+  content: '';
+  pointer-events: none;
 }
 
-.memoirCard {
+.archiveMemoirCard {
   --memoir-tilt: 0deg;
   --memoir-lift: 0px;
   position: relative;
   display: block;
-  flex: 0 0 330px;
-  align-self: flex-start;
-  scroll-snap-align: center;
+  min-width: 0;
+  grid-column: span 3;
+  grid-row: span 27;
   border: 0;
   background: transparent;
   padding: 0;
@@ -1980,174 +1947,366 @@
   cursor: pointer;
   text-align: left;
   transform: translateY(var(--memoir-lift)) rotate(var(--memoir-tilt));
-  transform-origin: 50% 12%;
+  transform-origin: 50% 10%;
   transition:
-    transform .9s cubic-bezier(.16, 1, .3, 1),
-    filter .65s ease;
+    filter .65s ease,
+    transform .9s cubic-bezier(.16, 1, .3, 1);
 }
 
-.memoirCard + .memoirCard {
-  margin-left: -12px;
+.archiveMemoirCard:nth-child(6n + 1) {
+  --memoir-tilt: -1.05deg;
+  --memoir-lift: 10px;
 }
 
-.memoirCardPortrait {
-  flex-basis: 244px;
+.archiveMemoirCard:nth-child(6n + 2) {
+  --memoir-tilt: .7deg;
+  --memoir-lift: -5px;
 }
 
-.memoirCardTall {
-  flex-basis: 218px;
+.archiveMemoirCard:nth-child(6n + 3) {
+  --memoir-tilt: -.45deg;
+  --memoir-lift: 18px;
 }
 
-.memoirCardWide {
-  flex-basis: 390px;
+.archiveMemoirCard:nth-child(6n + 4) {
+  --memoir-tilt: .9deg;
+  --memoir-lift: 2px;
 }
 
-.memoirPin {
+.archiveMemoirCard:nth-child(6n + 5) {
+  --memoir-tilt: -.65deg;
+  --memoir-lift: -8px;
+}
+
+.archiveMemoirCard:nth-child(6n) {
+  --memoir-tilt: .4deg;
+  --memoir-lift: 14px;
+}
+
+.archiveMemoirCardWide,
+.archiveMemoirCardFeature {
+  grid-column: span 4;
+  grid-row: span 26;
+}
+
+.archiveMemoirCardAnchor {
+  grid-column: span 4;
+  grid-row: span 29;
+}
+
+.archiveMemoirCardAnchor.archiveMemoirCardWide {
+  grid-column: span 5;
+  grid-row: span 28;
+}
+
+.archiveMemoirCardPortrait {
+  grid-column: span 3;
+  grid-row: span 38;
+}
+
+.archiveMemoirCardTall {
+  grid-column: span 3;
+  grid-row: span 45;
+}
+
+.archiveMemoirCardAnchor.archiveMemoirCardPortrait,
+.archiveMemoirCardFeature.archiveMemoirCardPortrait {
+  grid-row: span 40;
+}
+
+.archiveMemoirPin {
   position: absolute;
   top: -8px;
   left: 50%;
-  z-index: 5;
+  z-index: 6;
   width: 13px;
   height: 13px;
-  border: 3px solid rgba(244, 239, 231, .94);
+  border: 3px solid rgba(244, 239, 231, .96);
   border-radius: 50%;
   background: var(--red);
   box-shadow:
-    0 0 0 1px rgba(174, 45, 35, .32),
-    0 4px 12px rgba(31, 28, 24, .18);
+    0 0 0 1px rgba(174, 45, 35, .3),
+    0 5px 14px rgba(31, 28, 24, .18);
   transform: translateX(-50%);
   transition: transform .55s cubic-bezier(.16, 1, .3, 1);
 }
 
-.memoirPhoto {
+.archiveMemoirPhoto {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: #d8cfc2;
+  aspect-ratio: 4 / 3;
+  background: #d7cec1;
   box-shadow:
-    0 24px 50px rgba(48, 38, 30, .14),
-    0 5px 14px rgba(48, 38, 30, .08);
+    0 28px 58px rgba(48, 38, 30, .14),
+    0 6px 18px rgba(48, 38, 30, .08);
   transition:
     box-shadow .85s ease,
     transform .9s cubic-bezier(.16, 1, .3, 1);
 }
 
-.memoirCardPortrait .memoirPhoto {
-  aspect-ratio: 3 / 4;
+.archiveReportCue {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(244, 239, 231, .94);
+  box-shadow: 0 10px 26px rgba(31, 28, 24, .15);
+  opacity: 0;
+  padding: 8px 10px;
+  color: var(--ink);
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  transform: translateY(6px);
+  transition:
+    opacity .45s ease,
+    transform .7s cubic-bezier(.16, 1, .3, 1);
 }
 
-.memoirCardTall .memoirPhoto {
-  aspect-ratio: 2 / 3;
-}
-
-.memoirCardWide .memoirPhoto {
+.archiveMemoirCardWide .archiveMemoirPhoto,
+.archiveMemoirCardAnchor .archiveMemoirPhoto {
   aspect-ratio: 3 / 2;
 }
 
-.memoirPhoto::after {
+.archiveMemoirCardPortrait .archiveMemoirPhoto {
+  aspect-ratio: 3 / 4;
+}
+
+.archiveMemoirCardTall .archiveMemoirPhoto {
+  aspect-ratio: 2 / 3;
+}
+
+.archiveMemoirPhoto::after {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, .12), transparent 38%),
-    radial-gradient(ellipse at center, transparent 62%, rgba(31, 28, 24, .13) 100%);
+    linear-gradient(145deg, rgba(255, 255, 255, .11), transparent 38%),
+    radial-gradient(ellipse at center, transparent 60%, rgba(31, 28, 24, .14) 100%);
   content: '';
   pointer-events: none;
   transition: opacity .65s ease;
 }
 
-.memoirPhoto img {
+.archiveMemoirPhoto img {
   object-fit: cover;
-  object-position: center;
-  filter: saturate(.82) contrast(1.025);
+  filter: saturate(.84) contrast(1.025);
   transition:
-    filter .75s ease,
+    filter .8s ease,
     transform 1.05s cubic-bezier(.16, 1, .3, 1);
 }
 
-.memoirCardPortrait .memoirPhoto img {
-  object-position: center 28%;
-}
-
-.memoirCaption {
+.archiveMemoirCaption {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   display: grid;
-  width: calc(100% - 36px);
-  gap: 5px;
-  margin: -14px 12px 0 24px;
-  background: rgba(244, 239, 231, .95);
+  width: calc(100% - clamp(20px, 2vw, 34px));
+  gap: 8px;
+  margin: -16px 10px 0 clamp(16px, 2vw, 28px);
+  background:
+    linear-gradient(135deg, rgba(248, 244, 237, .985), rgba(240, 234, 225, .97));
+  border: 0;
   box-shadow:
-    0 14px 28px rgba(48, 38, 30, .11),
-    inset 0 0 0 1px rgba(31, 28, 24, .08);
-  padding: 13px 15px 14px;
-  transform: rotate(calc(var(--memoir-tilt) * -.35));
+    0 17px 34px rgba(48, 38, 30, .11),
+    inset 0 0 0 1px rgba(31, 28, 24, .075);
+  padding: clamp(14px, 1.5vw, 19px);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transform: rotate(calc(var(--memoir-tilt) * -.32));
   transition:
-    box-shadow .65s ease,
+    box-shadow .7s ease,
     transform .85s cubic-bezier(.16, 1, .3, 1);
 }
 
-.memoirCaption time {
-  color: var(--red);
+.archiveMemoirMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(31, 28, 24, .1);
+  padding-bottom: 8px;
+  color: #91877b;
   font-family: var(--font-sans), Arial, sans-serif;
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: .17em;
 }
 
-.memoirCaption strong {
-  font-family: var(--font-display, Georgia), Georgia, serif;
-  font-size: clamp(1.3125rem, 1.75vw, 1.8125rem);
-  font-weight: 400;
-  line-height: 1.02;
+.archiveMemoirMeta time {
+  color: var(--red);
+  font-weight: 600;
 }
 
-.memoirCaption small {
+.archiveMemoirType {
   overflow: hidden;
-  color: #756c62;
-  font-family: var(--font-body), Arial, sans-serif;
-  font-size: 0.75rem;
+  color: var(--red);
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .16em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.memoirCard:hover,
-.memoirCard:focus-visible {
+.archiveMemoirCaption strong {
+  font-family: var(--font-display, Georgia), Georgia, serif;
+  font-size: clamp(1.25rem, 1.65vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.archiveMemoirCardAnchor .archiveMemoirCaption strong {
+  font-size: clamp(1.5rem, 2vw, 2.15rem);
+}
+
+.archiveMemoirLocation {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #746b61;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.archiveMemoirLocation svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--red);
+  opacity: .72;
+}
+
+.archiveMemoirCard:hover,
+.archiveMemoirCard:focus-within {
   z-index: 7;
-  outline: none;
-  transform: translateY(calc(var(--memoir-lift) - 9px)) rotate(0) scale(1.018);
+  transform: translateY(calc(var(--memoir-lift) - 9px)) rotate(0) scale(1.012);
 }
 
-.memoirCard:hover .memoirPin,
-.memoirCard:focus-visible .memoirPin {
-  transform: translateX(-50%) scale(1.2);
+.archiveMemoirPhoto:focus-visible,
+.archiveMemoirCaption:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 5px;
 }
 
-.memoirCard:hover .memoirPhoto,
-.memoirCard:focus-visible .memoirPhoto {
+.archiveMemoirCard:hover .archiveMemoirPin,
+.archiveMemoirCard:focus-within .archiveMemoirPin {
+  transform: translateX(-50%) scale(1.16);
+}
+
+.archiveMemoirCard:hover .archiveMemoirPhoto,
+.archiveMemoirCard:focus-within .archiveMemoirPhoto {
   box-shadow:
-    0 32px 68px rgba(48, 38, 30, .18),
-    0 7px 18px rgba(48, 38, 30, .1);
+    0 36px 74px rgba(48, 38, 30, .18),
+    0 8px 20px rgba(48, 38, 30, .1);
 }
 
-.memoirCard:hover .memoirPhoto img,
-.memoirCard:focus-visible .memoirPhoto img {
+.archiveMemoirCard:hover .archiveMemoirPhoto img,
+.archiveMemoirCard:focus-within .archiveMemoirPhoto img {
   filter: saturate(1) contrast(1.04);
   transform: scale(1.035);
 }
 
-.memoirCard:hover .memoirPhoto::after,
-.memoirCard:focus-visible .memoirPhoto::after {
-  opacity: .55;
+.archiveMemoirCard:hover .archiveMemoirCaption,
+.archiveMemoirCard:focus-within .archiveMemoirCaption {
+  box-shadow:
+    0 21px 44px rgba(48, 38, 30, .14),
+    inset 0 0 0 1px rgba(31, 28, 24, .075);
+  transform: translateY(-3px) rotate(0);
 }
 
-.memoirCard:hover .memoirCaption,
-.memoirCard:focus-visible .memoirCaption {
-  box-shadow:
-    0 18px 38px rgba(48, 38, 30, .14),
-    inset 0 0 0 1px rgba(31, 28, 24, .08);
-  transform: translateY(-3px) rotate(0);
+.archiveMemoirPhoto:hover .archiveReportCue,
+.archiveMemoirPhoto:focus-visible .archiveReportCue {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.archiveMore {
+  margin-top: clamp(28px, 3vw, 46px);
+}
+
+.archiveMore > summary {
+  display: flex;
+  min-height: 66px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid rgba(31, 28, 24, .16);
+  border-bottom: 1px solid rgba(31, 28, 24, .16);
+  padding: 0 4px;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  list-style: none;
+  transition:
+    border-color .45s ease,
+    color .35s ease;
+}
+
+.archiveMore > summary::-webkit-details-marker {
+  display: none;
+}
+
+.archiveMore > summary:hover,
+.archiveMore > summary:focus-visible,
+.archiveMore[open] > summary {
+  border-color: rgba(174, 45, 35, .5);
+  color: var(--red);
+  outline: none;
+}
+
+.archiveMore > summary span {
+  font-size: 1.25rem;
+  font-weight: 300;
+  transition: transform .65s cubic-bezier(.16, 1, .3, 1);
+}
+
+.archiveMore[open] > summary span {
+  transform: rotate(45deg);
+}
+
+.archiveMemoirGridMore {
+  margin-top: clamp(20px, 2.5vw, 38px);
+}
+
+.archiveMemoirGridMore::before {
+  background: linear-gradient(90deg, rgba(174, 45, 35, .26), rgba(31, 28, 24, .08), transparent 90%);
+}
+
+.archiveFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  border-top: 1px solid rgba(31, 28, 24, .16);
+  margin-top: clamp(30px, 3vw, 46px);
+  padding-top: 18px;
+}
+
+.archiveFooter .archiveCount {
+  margin: 0;
+}
+
+.archiveFooter > p:last-child {
+  margin: 0;
+  color: var(--red);
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .17em;
 }
 
 .memoirModal {
@@ -2291,10 +2450,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .memoirCard,
-  .memoirPhoto,
-  .memoirPhoto img,
-  .memoirCaption,
+  .archiveMemoirCard,
+  .archiveMemoirPin,
+  .archiveMemoirPhoto,
+  .archiveMemoirPhoto img,
+  .archiveMemoirCaption,
+  .archiveReportCue,
   .memoirModalBackdrop,
   .memoirModalPanel {
     animation: none;
@@ -3450,6 +3611,44 @@
     grid-column: 2;
   }
 
+  .archiveMemoirGrid {
+    grid-auto-rows: 7px;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 7px;
+  }
+
+  .archiveMemoirCard,
+  .archiveMemoirCardPortrait,
+  .archiveMemoirCardTall {
+    grid-column: span 2;
+    grid-row: span 27;
+  }
+
+  .archiveMemoirCardWide,
+  .archiveMemoirCardFeature {
+    grid-column: span 3;
+    grid-row: span 28;
+  }
+
+  .archiveMemoirCardAnchor {
+    grid-column: span 4;
+    grid-row: span 31;
+  }
+
+  .archiveMemoirCardPortrait {
+    grid-row: span 36;
+  }
+
+  .archiveMemoirCardTall {
+    grid-row: span 43;
+  }
+
+  .archiveMemoirCardAnchor.archiveMemoirCardPortrait {
+    grid-column: span 3;
+    grid-row: span 37;
+  }
+
   .videosHead,
   .mediaHead {
     grid-template-columns: .35fr 1.65fr;
@@ -3917,69 +4116,6 @@
   letter-spacing: .16em;
 }
 
-.memoirTrack {
-  cursor: ew-resize;
-  scroll-behavior: auto;
-  scroll-snap-type: none;
-}
-
-.memoirCard {
-  cursor: pointer;
-}
-
-.memoirCaption {
-  width: calc(100% - 24px);
-  gap: 8px;
-  margin: -11px 12px 0;
-  background:
-    linear-gradient(135deg, rgba(248, 244, 237, .98), rgba(241, 235, 226, .96));
-  padding: 14px 16px 16px;
-}
-
-.memoirMetaRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid rgba(31, 28, 24, .1);
-  padding-bottom: 8px;
-}
-
-.memoirMetaRow time {
-  color: var(--red);
-}
-
-.memoirMetaRow > span {
-  color: #91877b;
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: .18em;
-}
-
-.memoirCaption strong {
-  font-size: clamp(1.25rem, 1.55vw, 1.625rem);
-  line-height: 1.04;
-}
-
-.memoirCaption small {
-  display: flex;
-  overflow: visible;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: 0.75rem;
-  line-height: 1.35;
-  text-overflow: clip;
-  white-space: normal;
-}
-
-.memoirCaption small svg {
-  flex: 0 0 auto;
-  margin-top: 1px;
-  color: var(--red);
-  opacity: .72;
-}
-
 .videos .videoMore > summary {
   transition:
     border-color .45s ease,
@@ -4154,6 +4290,25 @@
 
 /* Cohesive mobile layout */
 @media (max-width: 800px) {
+  .site a,
+  .site button,
+  .site summary,
+  .pressTabs > label {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .hero,
+  .story,
+  .practice,
+  .research,
+  .archive,
+  .videos,
+  .media,
+  .contact {
+    scroll-margin-top: 76px;
+  }
+
   .header {
     min-height: 76px;
     grid-template-columns: 1fr auto;
@@ -4464,29 +4619,6 @@
     max-width: 13ch;
     font-size: clamp(3.125rem, 14vw, 4.5rem);
   }
-  .memoirControls {
-    top: -52px;
-  }
-
-  .memoirTrack {
-    min-height: 560px;
-    gap: 12px;
-    padding: 54px 68px 72px 20px;
-  }
-
-  .memoirCard,
-  .memoirCardWide {
-    flex-basis: min(76vw, 340px);
-  }
-
-  .memoirCardPortrait {
-    flex-basis: min(61vw, 270px);
-  }
-
-  .memoirCardTall {
-    flex-basis: min(56vw, 235px);
-  }
-
   .memoirModalPanel {
     max-height: 92vh;
     grid-template-columns: 1fr;
@@ -4544,18 +4676,15 @@
     font-size: clamp(4.25rem, 20vw, 5.875rem);
   }
 
-  .memoirTrack {
-    cursor: auto;
-    scroll-behavior: smooth;
-    scroll-snap-type: x proximity;
-  }
   .header {
     min-height: 68px;
     grid-template-columns: minmax(0, 1fr) auto;
-    padding: 0 18px;
+    padding-right: max(18px, env(safe-area-inset-right));
+    padding-left: max(18px, env(safe-area-inset-left));
   }
 
   .identity {
+    min-height: 44px;
     gap: 11px;
   }
 
@@ -4570,8 +4699,8 @@
   }
 
   .menuButton {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 
   .mobileNav {
@@ -4585,7 +4714,7 @@
     background:
       linear-gradient(180deg, rgba(31, 28, 24, .98), rgba(31, 28, 24, .96)),
       var(--ink);
-    padding: 14px 22px 34px;
+    padding: 14px max(22px, env(safe-area-inset-right)) max(34px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
     box-shadow: 0 24px 60px rgba(20, 16, 12, .24);
   }
 
@@ -4627,15 +4756,16 @@
 
   .heroName {
     margin: 0 0 7px 1px;
-    font-size: clamp(2.625rem, 13.5vw, 3.5rem);
+    font-size: clamp(2.375rem, 12.3vw, 3.1875rem);
     line-height: .9;
+    white-space: nowrap;
   }
 
   .heroInstrument {
     max-width: 100%;
-    font-size: clamp(3.625rem, 18.5vw, 4.75rem);
+    font-size: clamp(3.375rem, 17vw, 4.375rem);
     line-height: .84;
-    letter-spacing: -.055em;
+    letter-spacing: -.065em;
     white-space: nowrap;
   }
 
@@ -4713,6 +4843,13 @@
     letter-spacing: .19em;
   }
 
+  .affiliations a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding-inline: 1px;
+  }
+
   .story {
     gap: 42px;
     padding: 78px 22px 82px;
@@ -4741,7 +4878,7 @@
 
   .practiceIntro {
     min-height: 0;
-    padding: 74px 22px 66px;
+    padding: 70px 22px 58px;
   }
 
   .practiceIntro h2 {
@@ -4764,7 +4901,7 @@
   .practiceNumber {
     position: static;
     order: 0;
-    margin-bottom: 46px;
+    margin-bottom: 38px;
   }
 
   .practiceGrid article > svg {
@@ -4785,6 +4922,9 @@
   }
 
   .practiceGrid a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
     order: 4;
     margin-top: 25px;
     font-size: 0.6875rem;
@@ -4809,6 +4949,8 @@
   }
 
   .researchCopy > a {
+    min-height: 44px;
+    align-items: center;
     margin-top: 20px;
     font-size: 0.6875rem;
   }
@@ -4862,55 +5004,157 @@
     line-height: .88;
   }
 
-  .memoirControls {
-    top: -48px;
-    right: 22px;
+  .archiveMemoirGrid {
+    grid-auto-rows: 6px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
+    row-gap: 6px;
+    margin-inline: 12px;
+    padding: 34px 0 12px;
   }
 
-  .memoirControls button {
-    width: 42px;
-    height: 42px;
+  .archiveMemoirGrid::before {
+    top: 4px;
   }
 
-  .memoirTrack {
-    min-height: 510px;
+  .archiveMemoirCard,
+  .archiveMemoirCardWide,
+  .archiveMemoirCardPortrait,
+  .archiveMemoirCardTall,
+  .archiveMemoirCardFeature,
+  .archiveMemoirCardAnchor {
+    grid-column: span 1;
+    grid-row: span 28;
+  }
+
+  .archiveMemoirCardAnchor.archiveMemoirCardWide,
+  .archiveMemoirCardAnchor.archiveMemoirCardPortrait,
+  .archiveMemoirCardFeature.archiveMemoirCardPortrait {
+    grid-column: span 1;
+  }
+
+  .archiveMemoirCardMobileWide,
+  .archiveMemoirCardAnchor.archiveMemoirCardMobileWide,
+  .archiveMemoirCardFeature.archiveMemoirCardMobileWide {
+    grid-column: span 2;
+    grid-row: span 34;
+  }
+
+  .archiveMemoirCardPortrait {
+    grid-row: span 37;
+  }
+
+  .archiveMemoirCardTall {
+    grid-row: span 44;
+  }
+
+  .archiveMemoirCardMobileWide,
+  .archiveMemoirCardAnchor.archiveMemoirCardMobileWide,
+  .archiveMemoirCardFeature.archiveMemoirCardMobileWide {
+    grid-column: span 2;
+    grid-row: span 34;
+  }
+
+  .archiveMemoirCard {
+    --memoir-tilt: 0deg;
+    --memoir-lift: 0px;
+  }
+
+  .archiveMemoirCard:nth-child(4n + 1) {
+    --memoir-tilt: -.6deg;
+    --memoir-lift: 4px;
+  }
+
+  .archiveMemoirCard:nth-child(4n + 2) {
+    --memoir-tilt: .5deg;
+    --memoir-lift: -3px;
+  }
+
+  .archiveMemoirCard:nth-child(4n + 3) {
+    --memoir-tilt: -.3deg;
+    --memoir-lift: 7px;
+  }
+
+  .archiveMemoirCard:nth-child(4n) {
+    --memoir-tilt: .45deg;
+    --memoir-lift: 1px;
+  }
+
+  .archiveMemoirCardWide .archiveMemoirPhoto,
+  .archiveMemoirCardAnchor .archiveMemoirPhoto {
+    aspect-ratio: 4 / 3;
+  }
+
+  .archiveMemoirCardMobileWide .archiveMemoirPhoto,
+  .archiveMemoirCardAnchor.archiveMemoirCardMobileWide .archiveMemoirPhoto {
+    aspect-ratio: 16 / 10;
+  }
+
+  .archiveMemoirCaption {
+    width: calc(100% - 14px);
+    gap: 6px;
+    margin: -10px 5px 0 9px;
+    padding: 11px 10px 12px;
+  }
+
+  .archiveMemoirMeta {
+    gap: 8px;
+    padding-bottom: 6px;
+    font-size: 0.625rem;
+    letter-spacing: .12em;
+  }
+
+  .archiveMemoirType {
+    font-size: 0.5625rem;
+    letter-spacing: .12em;
+  }
+
+  .archiveMemoirCaption strong,
+  .archiveMemoirCardAnchor .archiveMemoirCaption strong {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: clamp(1.0625rem, 4.7vw, 1.35rem);
+    line-height: 1.02;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+
+  .archiveMemoirCardMobileWide .archiveMemoirCaption strong,
+  .archiveMemoirCardAnchor.archiveMemoirCardMobileWide .archiveMemoirCaption strong {
+    font-size: clamp(1.35rem, 6vw, 1.7rem);
+    -webkit-line-clamp: 3;
+  }
+
+  .archiveMemoirLocation {
+    gap: 4px;
+    max-height: 2.8em;
+    overflow: hidden;
+    font-size: 0.625rem;
+  }
+
+  .archiveReportCue {
+    right: 8px;
+    bottom: 8px;
+    opacity: 1;
+    padding: 7px 8px;
+    font-size: 0.5625rem;
+    letter-spacing: .11em;
+    transform: none;
+  }
+
+  .archiveFooter {
+    align-items: flex-start;
+    flex-direction: column;
     gap: 10px;
-    padding: 48px 48px 68px 22px;
-    scroll-padding-inline: 22px;
-    scroll-snap-type: x mandatory;
-    touch-action: pan-x pan-y;
+    margin-inline: 22px;
   }
 
-  .memoirCard + .memoirCard {
-    margin-left: 0;
+  .archiveMore > summary {
+    margin-inline: 22px;
   }
 
-  .memoirCard,
-  .memoirCardWide {
-    flex-basis: min(82vw, 334px);
-  }
-
-  .memoirCardPortrait {
-    flex-basis: min(68vw, 278px);
-  }
-
-  .memoirCardTall {
-    flex-basis: min(62vw, 246px);
-  }
-
-  .memoirCaption {
-    width: calc(100% - 18px);
-    margin: -10px 9px 0;
-    padding: 13px 14px 15px;
-  }
-
-  .memoirCaption strong {
-    font-size: clamp(1.3125rem, 6.5vw, 1.6875rem);
-  }
-
-  .archiveCount {
-    margin: 0;
-    padding: 0 22px;
+  .archiveFooter .archiveCount {
+    padding: 0;
     font-size: 0.6875rem;
     line-height: 1.6;
   }
@@ -4983,9 +5227,10 @@
   }
 
   .coverageHead h2 {
-    max-width: 12ch;
-    font-size: clamp(2.5625rem, 11.5vw, 3.375rem);
-    line-height: 1.02;
+    max-width: 14ch;
+    font-size: clamp(2.25rem, 10.4vw, 3rem);
+    line-height: .99;
+    text-wrap: balance;
   }
 
   .coverageHead h2 br {
@@ -5064,6 +5309,11 @@
   .pressFeatureCopy p {
     font-size: 0.9375rem;
     line-height: 1.72;
+  }
+
+  .pressFeatureCopy > a {
+    min-height: 44px;
+    align-items: center;
   }
 
   .pressVideoModal {
@@ -5147,7 +5397,14 @@
   .footer {
     min-height: 0;
     gap: 18px;
-    padding: 34px 22px 38px;
+    padding: 34px 22px max(38px, env(safe-area-inset-bottom));
+  }
+
+  .footerIdentity,
+  .footer > a:last-child {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
   }
 }
 
@@ -5172,19 +5429,20 @@
     justify-self: start;
   }
 
-  .archiveHead,
-  .archiveCount {
+  .archiveHead {
     padding-inline: 18px;
   }
 
-  .memoirControls {
-    right: 18px;
+  .archiveMemoirGrid {
+    margin-inline: 10px;
   }
 
-  .memoirTrack {
-    padding-right: 42px;
-    padding-left: 18px;
-    scroll-padding-inline: 18px;
+  .archiveMore > summary {
+    margin-inline: 18px;
+  }
+
+  .archiveFooter {
+    margin-inline: 18px;
   }
 
   .contactTopline span:last-child {
@@ -5210,8 +5468,18 @@
     color: inherit;
   }
 
-  .memoirCard:hover {
-    filter: none;
+  .archiveMemoirCard:hover {
+    transform: none;
+  }
+
+  .archiveMemoirCard:hover .archiveMemoirPhoto img {
+    filter: saturate(.84) contrast(1.025);
+    transform: none;
+  }
+
+  .archiveReportCue {
+    opacity: 1;
+    transform: none;
   }
 
   .videoGrid a:hover .videoThumb img {
