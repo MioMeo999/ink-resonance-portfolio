@@ -1836,6 +1836,16 @@
   transform: translateY(-1px) scale(1.012) !important;
 }
 
+.pressTabActive::after {
+  transform: scaleX(1);
+}
+
+.pressTabActive .pressLogo img {
+  filter: none !important;
+  opacity: 1;
+  transform: translateY(-1px) scale(1.012) !important;
+}
+
 .pressTabs > label::after {
   right: 24px;
   left: 24px;
@@ -2943,15 +2953,6 @@
   scroll-margin-top: 120px;
 }
 
-.pressFeature:first-child,
-.pressFeature:target {
-  display: grid;
-}
-
-.pressPanels:has(.pressFeature:target) .pressFeature:first-child:not(:target) {
-  display: none;
-}
-
 .pressFeatureVisual {
   position: relative;
   min-height: 380px;
@@ -3181,8 +3182,7 @@
   padding: 30px 0 4px;
 }
 
-.pressFeature:first-child,
-.pressFeature:target {
+.pressFeatureActive {
   animation: pressReveal .62s cubic-bezier(.16, 1, .3, 1) both;
 }
 
@@ -3197,6 +3197,12 @@
   inset: 0;
   display: block;
   overflow: hidden;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
 }
 
 .pressVideoTrigger img {
@@ -3244,14 +3250,18 @@
   padding: clamp(18px, 4vw, 60px);
 }
 
-.pressVideoModal:target {
+.pressVideoModalOpen {
   display: grid;
 }
 
 .pressVideoBackdrop {
   position: absolute;
   inset: 0;
+  width: 100%;
+  border: 0;
   background: rgba(20, 17, 14, .82);
+  padding: 0;
+  cursor: pointer;
   backdrop-filter: blur(14px);
   animation: pressBackdropIn .35s ease both;
 }
@@ -3280,17 +3290,25 @@
   letter-spacing: .22em;
 }
 
-.pressVideoHead a {
+.pressVideoHead a,
+.pressVideoHead button {
   display: grid;
   width: 38px;
   height: 38px;
   place-items: center;
+  border: 0;
   border-radius: 50%;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
   transition: background .25s ease, transform .25s ease;
 }
 
 .pressVideoHead a:hover,
-.pressVideoHead a:focus-visible {
+.pressVideoHead a:focus-visible,
+.pressVideoHead button:hover,
+.pressVideoHead button:focus-visible {
   background: rgba(244, 239, 230, .12);
   transform: rotate(5deg);
 }
@@ -3474,9 +3492,13 @@
   opacity: 1;
 }
 
-.pressFeature:first-child,
-.pressFeature:target {
+.pressFeature {
   display: none;
+}
+
+.pressFeatureActive {
+  display: grid;
+  animation: pressReveal .52s cubic-bezier(.22, .61, .36, 1) both;
 }
 
 .pressSwitcher:has(input[id='press-control-1']:checked) [id='press-1'],
@@ -3680,10 +3702,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .heroWords,
-.heroPortraitFrame,
-.pressFeature:first-child,
-.pressFeature:target,
-.videoMore > .videoGrid {
+  .heroPortraitFrame,
+  .pressFeatureActive,
+  .videoMore > .videoGrid {
     animation: none;
   }
 

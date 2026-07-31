@@ -226,9 +226,12 @@ function ModernImage({
 export default function InkResonancePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedEngagement, setSelectedEngagement] = useState<(typeof engagementArchive)[number] | null>(null)
+  const [activePressId, setActivePressId] = useState(pressItems[0].id)
+  const [activePressVideoId, setActivePressVideoId] = useState<string | null>(null)
 
   const featuredVideos = performanceVideos.filter((video) => video.featured)
   const additionalVideos = performanceVideos.filter((video) => !video.featured)
+  const activePressVideo = pressItems.find((item) => item.id === activePressVideoId && item.videoUrl)
   const sortedEngagements = [...engagementArchive].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
@@ -331,37 +334,21 @@ export default function InkResonancePage() {
   }, [selectedEngagement])
 
   useEffect(() => {
-    const stopInactivePressVideos = () => {
-      const activeModalId = window.location.hash.slice(1)
+    if (!activePressVideoId) return
 
-      document.querySelectorAll<HTMLVideoElement>('video[data-press-video]').forEach((video) => {
-        const modal = video.closest<HTMLElement>('[role="dialog"]')
-        if (modal?.id === activeModalId) return
-
-        video.pause()
-        video.currentTime = 0
-      })
-    }
-
+    const previousOverflow = document.body.style.overflow
     const closePressVideoOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || !window.location.hash.startsWith('#press-video-')) return
-
-      const pressId = window.location.hash.replace('#press-video-', '')
-      window.location.hash = `press-${pressId}`
+      if (event.key === 'Escape') setActivePressVideoId(null)
     }
 
-    stopInactivePressVideos()
-    window.addEventListener('hashchange', stopInactivePressVideos)
+    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', closePressVideoOnEscape)
 
     return () => {
-      window.removeEventListener('hashchange', stopInactivePressVideos)
+      document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', closePressVideoOnEscape)
-      document.querySelectorAll<HTMLVideoElement>('video[data-press-video]').forEach((video) => {
-        video.pause()
-      })
     }
-  }, [])
+  }, [activePressVideoId])
 
   return (
     <div className={styles.site}>
@@ -736,13 +723,17 @@ export default function InkResonancePage() {
           </div>
 
           <div className={styles.pressSwitcher}>
-            {pressItems.map((item, index) => (
+            {pressItems.map((item) => (
               <input
                 className={styles.pressControl}
                 type="radio"
                 name="press-story"
                 id={`press-control-${item.id}`}
-                defaultChecked={index === 0}
+                checked={activePressId === item.id}
+                onChange={() => {
+                  setActivePressId(item.id)
+                  setActivePressVideoId(null)
+                }}
                 key={`control-${item.id}`}
               />
             ))}
@@ -750,6 +741,7 @@ export default function InkResonancePage() {
               {pressItems.map((item) => (
                 <label
                   htmlFor={`press-control-${item.id}`}
+                  className={activePressId === item.id ? styles.pressTabActive : undefined}
                   key={item.id}
                 >
                   <span className={styles.pressLogo}>
@@ -768,7 +760,12 @@ export default function InkResonancePage() {
 
             <div className={styles.pressPanels}>
               {pressItems.map((item) => (
-                <section className={styles.pressFeature} id={`press-${item.id}`} key={item.id}>
+                <section
+                  className={`${styles.pressFeature} ${activePressId === item.id ? styles.pressFeatureActive : ''}`}
+                  id={`press-${item.id}`}
+                  aria-hidden={activePressId !== item.id}
+                  key={item.id}
+                >
                   <div
                     className={[
                       styles.pressFeatureVisual,
@@ -778,9 +775,10 @@ export default function InkResonancePage() {
                   >
                     {item.posterUrl || item.screenshotUrl ? (
                       item.videoUrl ? (
-                        <a
+                        <button
+                          type="button"
                           className={styles.pressVideoTrigger}
-                          href={`#press-video-${item.id}`}
+                          onClick={() => setActivePressVideoId(item.id)}
                           aria-label={`Play ${item.name} coverage video`}
                         >
                           <Image
@@ -799,7 +797,7 @@ export default function InkResonancePage() {
                             sizes="(max-width: 800px) 100vw, 48vw"
                           />
                           <span><Play size={18} fill="currentColor" /></span>
-                        </a>
+                        </button>
                       ) : (
                         <>
                           <Image
@@ -847,38 +845,37 @@ export default function InkResonancePage() {
             </div>
           </div>
 
-          {/* Future accessibility: replace the CSS :target press and QR overlays with native dialog elements using showModal() for focus trapping, Escape handling, and clean history. */}
-          {pressItems.filter((item) => item.videoUrl).map((item) => (
+          {activePressVideo ? (
             <div
-              className={styles.pressVideoModal}
-              id={`press-video-${item.id}`}
+              className={`${styles.pressVideoModal} ${styles.pressVideoModalOpen}`}
               role="dialog"
-              aria-label={`${item.name} coverage video`}
-              key={`video-${item.id}`}
+              aria-modal="true"
+              aria-label={`${activePressVideo.name} coverage video`}
             >
-              <a
+              <button
+                type="button"
                 className={styles.pressVideoBackdrop}
-                href={`#press-${item.id}`}
+                onClick={() => setActivePressVideoId(null)}
                 aria-label="Close video"
               />
               <div className={styles.pressVideoPanel}>
                 <div className={styles.pressVideoHead}>
-                  <span>{item.name} · Coverage clip</span>
-                  <a href={`#press-${item.id}`} aria-label="Close video">
+                  <span>{activePressVideo.name} · Coverage clip</span>
+                  <button type="button" onClick={() => setActivePressVideoId(null)} aria-label="Close video">
                     <X size={20} />
-                  </a>
+                  </button>
                 </div>
                 <video
+                  autoPlay
                   controls
                   playsInline
-                  poster={item.posterUrl || item.screenshotUrl}
-                  data-press-video={item.id}
+                  poster={activePressVideo.posterUrl || activePressVideo.screenshotUrl}
                 >
-                  <source src={item.videoUrl} />
+                  <source src={activePressVideo.videoUrl || undefined} />
                 </video>
               </div>
             </div>
-          ))}
+          ) : null}
         </section>
 
         <section id="contact" className={styles.contact}>
