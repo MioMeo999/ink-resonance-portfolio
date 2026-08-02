@@ -5588,3 +5588,449 @@
     transform: none;
   }
 }
+
+/* Editorial motion system */
+.desktopNav a {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  transition: color .56s ease;
+}
+
+.desktopNav a > span {
+  display: inline-block;
+  overflow: hidden;
+  max-width: 0;
+  margin-right: 0;
+  color: var(--red);
+  font-size: .58rem;
+  letter-spacing: .08em;
+  opacity: 0;
+  transition:
+    max-width .68s cubic-bezier(.16, 1, .3, 1),
+    margin-right .68s cubic-bezier(.16, 1, .3, 1),
+    opacity .46s ease;
+}
+
+.desktopNav .navActive,
+.mobileNav .navActive {
+  color: var(--red);
+}
+
+.desktopNav .navActive > span {
+  max-width: 2.4em;
+  margin-right: 7px;
+  opacity: 1;
+}
+
+.desktopNav .navActive::after {
+  transform: scaleX(1);
+}
+
+.heroWords {
+  animation: none;
+}
+
+.heroIndex {
+  animation: heroLabelIn .62s .06s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+.heroName {
+  animation: heroNameIn .88s .16s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.heroInstrument {
+  animation: heroInstrumentIn .98s .3s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.heroTagline {
+  animation: heroDetailIn .78s .54s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+.heroStatement > span {
+  transform-origin: top;
+  animation: heroRuleIn .9s .64s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.heroStatement > div {
+  animation: heroDetailIn .78s .66s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+.heroActions {
+  animation: heroDetailIn .75s .82s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+.heroPortraitFrame {
+  animation: heroPortraitEditorialIn 1.12s .28s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.heroSideNote,
+.scrollCue {
+  animation: heroLabelIn .62s .94s ease both;
+}
+
+.affiliations {
+  animation: heroAffiliationsIn .72s 1.04s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+@keyframes heroLabelIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes heroNameIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroInstrumentIn {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: .16;
+    transform: translateX(-10px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes heroDetailIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroRuleIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes heroPortraitEditorialIn {
+  from {
+    opacity: 0;
+    transform: scale(.98) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes heroAffiliationsIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.motionReady [data-chapter] [data-reveal] {
+  opacity: 0;
+  translate: 0 22px;
+  transition:
+    clip-path .94s cubic-bezier(.16, 1, .3, 1),
+    opacity .78s ease,
+    translate .94s cubic-bezier(.16, 1, .3, 1);
+  will-change: opacity, translate;
+}
+
+.motionReady [data-chapter] [data-reveal='heading'] {
+  clip-path: inset(0 0 100% 0);
+}
+
+.motionReady .chapterVisible [data-reveal] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.motionReady .chapterVisible [data-reveal='heading'] {
+  clip-path: inset(0 0 0 0);
+}
+
+.motionReady .chapterVisible [data-reveal='marker'] {
+  transition-delay: .04s;
+}
+
+.motionReady .chapterVisible [data-reveal='heading'] {
+  transition-delay: .14s;
+}
+
+.motionReady .chapterVisible [data-reveal='copy'] {
+  transition-delay: .26s;
+}
+
+.motionReady .chapterVisible [data-reveal='visual'] {
+  transition-delay: .38s;
+}
+
+.motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
+  opacity: 0;
+  translate: var(--archive-reveal-x, 0) 24px;
+}
+
+.motionReady .chapterVisible .archiveMemoirCard {
+  animation: archiveMemoryIn .92s cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc(.28s + var(--archive-index) * .08s);
+}
+
+.archiveMemoirCard:nth-child(odd) {
+  --archive-reveal-x: -12px;
+}
+
+.archiveMemoirCard:nth-child(even) {
+  --archive-reveal-x: 12px;
+}
+
+@keyframes archiveMemoryIn {
+  from {
+    opacity: 0;
+    translate: var(--archive-reveal-x, 0) 24px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.archiveMemoirPhoto img {
+  transition:
+    filter 1s ease,
+    transform 1.2s cubic-bezier(.16, 1, .3, 1);
+}
+
+.memoirModalCopy > * {
+  animation: memoirCopyIn .68s .22s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.memoirModalCopy > :nth-child(2) { animation-delay: .29s; }
+.memoirModalCopy > :nth-child(3) { animation-delay: .36s; }
+.memoirModalCopy > :nth-child(4) { animation-delay: .43s; }
+.memoirModalCopy > :nth-child(5) { animation-delay: .5s; }
+
+@keyframes memoirCopyIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:global(::view-transition-old(root)),
+:global(::view-transition-new(root)) {
+  animation: none;
+}
+
+:global(::view-transition-group(*)) {
+  animation-duration: .8s;
+  animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+}
+
+.researchPoster > a {
+  transition:
+    box-shadow .82s cubic-bezier(.16, 1, .3, 1),
+    transform .82s cubic-bezier(.16, 1, .3, 1);
+}
+
+.researchPosterAction svg,
+.videoInfo small svg,
+.email > svg:last-child {
+  transition: transform .56s cubic-bezier(.16, 1, .3, 1);
+}
+
+.videoInfo small {
+  position: relative;
+  width: fit-content;
+  padding-bottom: 6px;
+}
+
+.videoInfo small::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--red-bright);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .68s cubic-bezier(.16, 1, .3, 1);
+}
+
+.pressFeatureActive {
+  animation: pressReveal .82s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.pressFeatureActive .pressFeatureCopy {
+  animation: pressCopyIn .72s .14s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes pressReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pressCopyIn {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.email {
+  position: relative;
+  transition: color .54s ease;
+}
+
+.email::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  background: var(--red-bright);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .74s cubic-bezier(.16, 1, .3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .archiveMemoirCard:hover .archiveMemoirPhoto img,
+  .archiveMemoirCard:focus-within .archiveMemoirPhoto img {
+    transform: scale(1.015);
+  }
+
+  .researchPoster:hover {
+    transform: rotate(-.35deg);
+  }
+
+  .researchPoster > a:hover,
+  .researchPoster > a:focus-visible {
+    box-shadow:
+      0 31px 68px rgba(53, 42, 33, .17),
+      0 8px 20px rgba(53, 42, 33, .09);
+    transform: rotate(0) translateY(-3px);
+  }
+
+  .researchPoster > a:hover .researchPosterAction,
+  .researchPoster > a:focus-visible .researchPosterAction {
+    transform: translate(2px, -2px);
+  }
+
+  .researchPoster > a:hover .researchPosterAction svg,
+  .researchPoster > a:focus-visible .researchPosterAction svg,
+  .videoGrid a:hover .videoInfo small svg,
+  .videoGrid a:focus-visible .videoInfo small svg,
+  .email:hover > svg:last-child,
+  .email:focus-visible > svg:last-child {
+    transform: translate(3px, -3px);
+  }
+
+  .videoGrid a:hover .videoThumb img,
+  .videoGrid a:focus-visible .videoThumb img {
+    transform: scale(1.018);
+  }
+
+  .videoGrid a:hover .videoPlay,
+  .videoGrid a:focus-visible .videoPlay {
+    border-color: rgba(215, 90, 78, .9);
+    background: rgba(25, 21, 18, .82);
+    color: var(--paper);
+    box-shadow: 0 0 0 7px rgba(215, 90, 78, .12);
+    animation: videoPlayResponse .48s cubic-bezier(.16, 1, .3, 1) both;
+  }
+
+  .videoGrid a:hover .videoInfo small::after,
+  .videoGrid a:focus-visible .videoInfo small::after,
+  .email:hover::after,
+  .email:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes videoPlayResponse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  42% { transform: translate(-50%, -50%) scale(.94); }
+  100% { transform: translate(-50%, -50%) scale(1.025); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroIndex,
+  .heroName,
+  .heroInstrument,
+  .heroTagline,
+  .heroStatement > span,
+  .heroStatement > div,
+  .heroActions,
+  .heroPortraitFrame,
+  .heroSideNote,
+  .scrollCue,
+  .affiliations,
+  .motionReady .chapterVisible .archiveMemoirCard,
+  .memoirModalCopy > *,
+  .pressFeatureActive,
+  .pressFeatureActive .pressFeatureCopy,
+  .videoGrid a:hover .videoPlay {
+    animation: none !important;
+  }
+
+  .motionReady [data-chapter] [data-reveal],
+  .motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
+    clip-path: none;
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+
+  .desktopNav a > span,
+  .researchPoster > a,
+  .researchPosterAction svg,
+  .videoInfo small::after,
+  .videoInfo small svg,
+  .email,
+  .email::after,
+  .email > svg:last-child {
+    transition: none;
+  }
+
+  :global(::view-transition-group(*)),
+  :global(::view-transition-old(*)),
+  :global(::view-transition-new(*)) {
+    animation: none !important;
+  }
+}

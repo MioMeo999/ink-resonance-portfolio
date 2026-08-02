@@ -1,9 +1,12 @@
 'use client'
 
 import {
+  type CSSProperties,
   useEffect,
+  useRef,
   useState,
 } from 'react'
+import { flushSync } from 'react-dom'
 import Image from 'next/image'
 import {
   ArrowDown,
@@ -78,13 +81,31 @@ const formatEngagementDate = (date: string) => {
 }
 
 const navItems = [
-  { href: '#story', label: 'About' },
-  { href: '#practice', label: 'Approach' },
-  { href: '#research', label: 'Research' },
-  { href: '#archive', label: 'Engagements' },
-  { href: '#videos', label: 'Watch' },
-  { href: '#media', label: 'Press' },
+  { href: '#story', label: 'About', chapter: '01' },
+  { href: '#practice', label: 'Approach', chapter: '02' },
+  { href: '#research', label: 'Research', chapter: '03' },
+  { href: '#archive', label: 'Engagements', chapter: '04' },
+  { href: '#videos', label: 'Watch', chapter: '05' },
+  { href: '#media', label: 'Press', chapter: '06' },
 ]
+
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (callback: () => void) => { finished: Promise<void> }
+}
+
+const runViewTransition = (update: () => void) => {
+  const viewTransitionDocument = document as ViewTransitionDocument
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  if (prefersReducedMotion || !viewTransitionDocument.startViewTransition) {
+    update()
+    return
+  }
+
+  viewTransitionDocument.startViewTransition(() => {
+    flushSync(update)
+  })
+}
 
 const pressNotes: Record<string, { eyebrow: string; description: string; note: string }> = {
   CCTV: {
@@ -224,8 +245,10 @@ function ModernImage({
 }
 
 export default function InkResonancePage() {
+  const siteRef = useRef<HTMLDivElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedEngagement, setSelectedEngagement] = useState<(typeof engagementArchive)[number] | null>(null)
+  const [activeSection, setActiveSection] = useState('story')
   const [activePressId, setActivePressId] = useState(pressItems[0].id)
   const [activePressVideoId, setActivePressVideoId] = useState<string | null>(null)
 
@@ -245,6 +268,13 @@ export default function InkResonancePage() {
     const isPortrait = portraitArchiveImages.has(item.images[0])
     const isWide = wideArchiveImages.has(item.images[0])
     const isTall = tallArchiveImages.has(item.images[0])
+    const transitionName = `memory-${item.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`
+    const cardStyle = {
+      '--archive-index': Math.min(index, 8),
+    } as CSSProperties
+    const photoStyle = {
+      viewTransitionName: selectedEngagement?.id === item.id ? 'none' : transitionName,
+    } as CSSProperties
 
     return (
       <article
@@ -258,6 +288,7 @@ export default function InkResonancePage() {
           archiveMobileWideIds.has(item.id) ? styles.archiveMemoirCardMobileWide : '',
         ].filter(Boolean).join(' ')}
         key={item.id}
+        style={cardStyle}
       >
         <span className={styles.archiveMemoirPin} aria-hidden="true" />
         <a
@@ -266,6 +297,7 @@ export default function InkResonancePage() {
           rel="noopener noreferrer"
           className={styles.archiveMemoirPhoto}
           aria-label={`Read the report for ${item.event}`}
+          style={photoStyle}
         >
           <Image
             src={item.images[0]}
@@ -282,7 +314,7 @@ export default function InkResonancePage() {
         <button
           type="button"
           className={styles.archiveMemoirCaption}
-          onClick={() => setSelectedEngagement(item)}
+          onClick={() => runViewTransition(() => setSelectedEngagement(item))}
           aria-label={`Open memory details: ${item.event}`}
         >
           <span className={styles.archiveMemoirMeta}>
@@ -321,7 +353,9 @@ export default function InkResonancePage() {
 
     const previousOverflow = document.body.style.overflow
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSelectedEngagement(null)
+      if (event.key === 'Escape') {
+        runViewTransition(() => setSelectedEngagement(null))
+      }
     }
 
     document.body.style.overflow = 'hidden'
@@ -350,8 +384,62 @@ export default function InkResonancePage() {
     }
   }, [activePressVideoId])
 
+  useEffect(() => {
+    const root = siteRef.current
+    if (!root) return
+
+    const chapters = Array.from(root.querySelectorAll<HTMLElement>('[data-chapter]'))
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    root.classList.add(styles.motionReady)
+
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+      chapters.forEach((chapter) => chapter.classList.add(styles.chapterVisible))
+      return
+    }
+
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add(styles.chapterVisible)
+          observer.unobserve(entry.target)
+        })
+      },
+      { threshold: 0.14, rootMargin: '0px 0px -10% 0px' },
+    )
+
+    chapters.forEach((chapter) => revealObserver.observe(chapter))
+
+    return () => revealObserver.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const root = siteRef.current
+    if (!root || !('IntersectionObserver' in window)) return
+
+    const navigableSections = navItems
+      .map((item) => root.querySelector<HTMLElement>(item.href))
+      .filter((section): section is HTMLElement => Boolean(section))
+
+    const navigationObserver = new IntersectionObserver(
+      (entries) => {
+        const activeEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+
+        if (activeEntry?.target.id) setActiveSection(activeEntry.target.id)
+      },
+      { threshold: [0, 0.15, 0.35], rootMargin: '-28% 0px -56% 0px' },
+    )
+
+    navigableSections.forEach((section) => navigationObserver.observe(section))
+
+    return () => navigationObserver.disconnect()
+  }, [])
+
   return (
-    <div className={styles.site}>
+    <div className={styles.site} ref={siteRef}>
       <header className={styles.header}>
         <a href="#home" className={styles.identity} aria-label="Lijun Zhang, home">
           <span className={styles.brandDot} aria-hidden="true" />
@@ -360,7 +448,14 @@ export default function InkResonancePage() {
 
         <nav className={styles.desktopNav} aria-label="Primary navigation">
           {navItems.map((item) => (
-            <a href={item.href} key={item.href}>{item.label}</a>
+            <a
+              href={item.href}
+              className={activeSection === item.href.slice(1) ? styles.navActive : undefined}
+              aria-current={activeSection === item.href.slice(1) ? 'page' : undefined}
+              key={item.href}
+            >
+              <span>{item.chapter}</span>{item.label}
+            </a>
           ))}
         </nav>
 
@@ -380,9 +475,15 @@ export default function InkResonancePage() {
 
         {menuOpen && (
           <nav className={styles.mobileNav} aria-label="Mobile navigation">
-            {navItems.map((item, index) => (
-              <a href={item.href} key={item.href} onClick={() => setMenuOpen(false)}>
-                <span>0{index + 1}</span>{item.label}
+            {navItems.map((item) => (
+              <a
+                href={item.href}
+                className={activeSection === item.href.slice(1) ? styles.navActive : undefined}
+                aria-current={activeSection === item.href.slice(1) ? 'page' : undefined}
+                key={item.href}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span>{item.chapter}</span>{item.label}
               </a>
             ))}
           </nav>
@@ -447,8 +548,8 @@ export default function InkResonancePage() {
           <a href="#research">Healthy Buildings Network</a>
         </div>
 
-        <section id="story" className={styles.story}>
-          <div className={styles.storyBackdrop} aria-hidden="true">
+        <section id="story" className={styles.story} data-chapter>
+          <div className={styles.storyBackdrop} aria-hidden="true" data-reveal="visual">
             <Image
               src="/images/bg-home.jpg"
               alt=""
@@ -456,16 +557,16 @@ export default function InkResonancePage() {
               sizes="100vw"
             />
           </div>
-          <div className={styles.sectionMarker}>
+          <div className={styles.sectionMarker} data-reveal="marker">
             <span>01</span>
             <p>POSITION / STORY</p>
           </div>
-          <div className={styles.storyHeadline}>
+          <div className={styles.storyHeadline} data-reveal="heading">
             <span>My practice</span>
             <h2>Music is not an object to preserve.</h2>
             <h2><em>It is a place to meet.</em></h2>
           </div>
-          <div className={styles.storyBody}>
+          <div className={styles.storyBody} data-reveal="copy">
             <p>
               Lijun Zhang is a musician and cultural connector based in the
               United Kingdom. Through the Guzheng, he creates opportunities for
@@ -486,20 +587,20 @@ export default function InkResonancePage() {
           </div>
         </section>
 
-        <section id="practice" className={styles.practice}>
+        <section id="practice" className={styles.practice} data-chapter>
           <div className={styles.practiceIntro}>
-            <div className={styles.sectionMarkerLight}>
+            <div className={styles.sectionMarkerLight} data-reveal="marker">
               <span>02</span>
               <p>ARTISTIC PRACTICE</p>
             </div>
-            <h2>One practice.<br /><em>Three movements.</em></h2>
-            <p>
+            <h2 data-reveal="heading">One practice.<br /><em>Three movements.</em></h2>
+            <p data-reveal="copy">
               Tradition becomes contemporary when it is experienced together:
               on stage, through inquiry, and in community.
             </p>
           </div>
 
-          <div className={styles.practiceGrid}>
+          <div className={styles.practiceGrid} data-reveal="visual">
             <article>
               <span className={styles.practiceNumber}>01 / LIVE</span>
               <Music2 size={30} />
@@ -533,8 +634,8 @@ export default function InkResonancePage() {
           </div>
         </section>
 
-        <section id="research" className={styles.research}>
-          <div className={styles.researchPoster}>
+        <section id="research" className={styles.research} data-chapter>
+          <div className={styles.researchPoster} data-reveal="visual">
             <a
               href={researchReportUrl}
               target="_blank"
@@ -556,25 +657,26 @@ export default function InkResonancePage() {
           </div>
 
           <div className={styles.researchCopy}>
-            <div className={styles.researchLabel}>
+            <div className={styles.researchLabel} data-reveal="marker">
               <span>03</span>
               <p>FEATURED RESEARCH</p>
             </div>
-            <h2>Sonic<br /><em>Belonging</em></h2>
-            <h3>Co-designing community music spaces for wellbeing and social inclusion.</h3>
-            <p>
+            <h2 data-reveal="heading">Sonic<br /><em>Belonging</em></h2>
+            <h3 data-reveal="copy">Co-designing community music spaces for wellbeing and social inclusion.</h3>
+            <p data-reveal="copy">
               Supported by the Healthy Buildings Network at the University of
               Leeds, the project brought Chinese and Indian music, dance,
               cultural participation, and shared reflection into university and
               community spaces.
             </p>
-            <p>
+            <p data-reveal="copy">
               Across three workshops, it asked how atmosphere, accessibility,
               cultural familiarity, and opportunities for participation can
               make shared environments feel more welcoming and socially
               connected.
             </p>
             <a
+              data-reveal="copy"
               href={researchReportUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -583,21 +685,21 @@ export default function InkResonancePage() {
             </a>
           </div>
 
-          <div className={styles.researchDiagram} aria-label="Three themes: sound, place, belonging">
+          <div className={styles.researchDiagram} aria-label="Three themes: sound, place, belonging" data-reveal="visual">
             <span>01<small>Sound</small></span>
             <span>02<small>Place</small></span>
             <span>03<small>Belonging</small></span>
           </div>
         </section>
 
-        <section id="archive" className={styles.archive}>
+        <section id="archive" className={styles.archive} data-chapter>
           <div className={styles.archiveHead}>
-            <div className={styles.sectionMarker}>
+            <div className={styles.sectionMarker} data-reveal="marker">
               <span>04</span>
               <p>ACTIVITY ARCHIVE</p>
             </div>
-            <h2>Rooms remembered,<br /><em>in sound and colour.</em></h2>
-            <p>
+            <h2 data-reveal="heading">Rooms remembered,<br /><em>in sound and colour.</em></h2>
+            <p data-reveal="copy">
               A travelling memoir of performances, workshops, collaborations,
               and the people encountered along the way.
             </p>
@@ -625,24 +727,24 @@ export default function InkResonancePage() {
           </div>
         </section>
 
-        <section id="videos" className={styles.videos}>
+        <section id="videos" className={styles.videos} data-chapter>
           <div className={styles.videosHead}>
-            <div className={styles.sectionMarkerLight}>
+            <div className={styles.sectionMarkerLight} data-reveal="marker">
               <span>05</span>
               <p>PERFORMANCE VIDEOS</p>
             </div>
-            <div>
+            <div data-reveal="heading">
               <span>Selected by the artist</span>
               <h2>Watch the music<br /><em>in motion.</em></h2>
             </div>
-            <p>
+            <p data-reveal="copy">
               A performance-led collection of solo work, ensembles, and
               cross-cultural collaborations—separate from broadcast and press
               coverage.
             </p>
           </div>
 
-          <div className={styles.videoGrid}>
+          <div className={styles.videoGrid} data-reveal="visual">
             {featuredVideos.map((video, index) => (
               <a
                 key={video.id}
@@ -713,16 +815,16 @@ export default function InkResonancePage() {
           </details>
         </section>
 
-        <section id="media" className={styles.media}>
+        <section id="media" className={styles.media} data-chapter>
           <div className={`${styles.mediaHead} ${styles.coverageHead}`}>
-            <div className={styles.coverageLabel}>
+            <div className={styles.coverageLabel} data-reveal="marker">
               <span aria-hidden="true" />
               <p>COVERAGE</p>
             </div>
-            <h2>Covered by international media, and by the institutions I work alongside.</h2>
+            <h2 data-reveal="heading">Covered by international media, and by the institutions I work alongside.</h2>
           </div>
 
-          <div className={styles.pressSwitcher}>
+          <div className={styles.pressSwitcher} data-reveal="visual">
             {pressItems.map((item) => (
               <input
                 className={styles.pressControl}
@@ -878,19 +980,19 @@ export default function InkResonancePage() {
           ) : null}
         </section>
 
-        <section id="contact" className={styles.contact}>
-          <div className={styles.contactTopline}>
+        <section id="contact" className={styles.contact} data-chapter>
+          <div className={styles.contactTopline} data-reveal="marker">
             <span>07 / CONTACT</span>
             <span>Performance · Research · Education · Collaboration</span>
           </div>
-          <h2>Let&apos;s make<br /><em>a place to meet.</em></h2>
-          <a href="mailto:zhanglijun109@gmail.com" className={styles.email}>
+          <h2 data-reveal="heading">Let&apos;s make<br /><em>a place to meet.</em></h2>
+          <a href="mailto:zhanglijun109@gmail.com" className={styles.email} data-reveal="copy">
             <Mail size={24} />
             <span>zhanglijun109@gmail.com</span>
             <ArrowUpRight size={24} />
           </a>
 
-          <div className={styles.contactLower}>
+          <div className={styles.contactLower} data-reveal="visual">
             <div className={styles.contactDetails}>
               <span><MapPin size={15} /> Leeds, United Kingdom</span>
               <span><CalendarDays size={15} /> Available for selected projects</span>
@@ -942,19 +1044,24 @@ export default function InkResonancePage() {
           <button
             type="button"
             className={styles.memoirModalBackdrop}
-            onClick={() => setSelectedEngagement(null)}
+            onClick={() => runViewTransition(() => setSelectedEngagement(null))}
             aria-label="Close memory"
           />
           <div className={styles.memoirModalPanel}>
             <button
               type="button"
               className={styles.memoirModalClose}
-              onClick={() => setSelectedEngagement(null)}
+              onClick={() => runViewTransition(() => setSelectedEngagement(null))}
               aria-label="Close memory"
             >
               <X size={19} />
             </button>
-            <div className={styles.memoirModalImage}>
+            <div
+              className={styles.memoirModalImage}
+              style={{
+                viewTransitionName: `memory-${selectedEngagement.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`,
+              } as CSSProperties}
+            >
               <Image
                 src={selectedEngagement.images[0]}
                 alt={selectedEngagement.event}
