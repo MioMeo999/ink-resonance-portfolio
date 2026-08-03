@@ -530,6 +530,74 @@ export default function InkResonancePage() {
     }
   }, [])
 
+  useEffect(() => {
+    const root = siteRef.current
+    if (!root || !('ResizeObserver' in window)) return
+
+    const grids = Array.from(
+      root.querySelectorAll<HTMLElement>(`.${styles.archiveMemoirGrid}`),
+    )
+    const cards = grids.flatMap((grid) =>
+      Array.from(grid.querySelectorAll<HTMLElement>(`.${styles.archiveMemoirCard}`)),
+    )
+    let layoutFrame: number | null = null
+
+    const balanceArchiveRows = () => {
+      grids.forEach((grid) => {
+        const gridStyles = window.getComputedStyle(grid)
+        const rowHeight = Number.parseFloat(gridStyles.gridAutoRows)
+        const rowGap = Number.parseFloat(gridStyles.rowGap)
+
+        if (!rowHeight || Number.isNaN(rowGap)) return
+
+        grid.querySelectorAll<HTMLElement>(`.${styles.archiveMemoirCard}`).forEach((card) => {
+          if (!card.offsetParent) return
+
+          const cardStyles = window.getComputedStyle(card)
+          const tilt = Math.abs(
+            Number.parseFloat(cardStyles.getPropertyValue('--memoir-tilt')) || 0,
+          )
+          const lift = Math.abs(
+            Number.parseFloat(cardStyles.getPropertyValue('--memoir-lift')) || 0,
+          )
+          const rotatedEdge = Math.sin((tilt * Math.PI) / 180) * card.offsetWidth
+          const breathingRoom = window.innerWidth <= 700 ? 14 : 24
+          const visualHeight = card.offsetHeight + lift + rotatedEdge + breathingRoom
+          const rowSpan = Math.ceil((visualHeight + rowGap) / (rowHeight + rowGap))
+
+          card.style.gridRowStart = `span ${rowSpan}`
+          card.style.gridRowEnd = 'auto'
+        })
+      })
+    }
+
+    const scheduleArchiveBalance = () => {
+      if (layoutFrame !== null) window.cancelAnimationFrame(layoutFrame)
+      layoutFrame = window.requestAnimationFrame(() => {
+        layoutFrame = null
+        balanceArchiveRows()
+      })
+    }
+
+    const cardObserver = new ResizeObserver(scheduleArchiveBalance)
+    cards.forEach((card) => cardObserver.observe(card))
+    root.querySelectorAll<HTMLDetailsElement>(`.${styles.archiveMore}`).forEach((details) => {
+      details.addEventListener('toggle', scheduleArchiveBalance)
+    })
+    window.addEventListener('resize', scheduleArchiveBalance)
+    document.fonts.ready.then(scheduleArchiveBalance)
+    scheduleArchiveBalance()
+
+    return () => {
+      if (layoutFrame !== null) window.cancelAnimationFrame(layoutFrame)
+      cardObserver.disconnect()
+      root.querySelectorAll<HTMLDetailsElement>(`.${styles.archiveMore}`).forEach((details) => {
+        details.removeEventListener('toggle', scheduleArchiveBalance)
+      })
+      window.removeEventListener('resize', scheduleArchiveBalance)
+    }
+  }, [])
+
   return (
     <div className={styles.site} ref={siteRef}>
       <header className={styles.header}>
