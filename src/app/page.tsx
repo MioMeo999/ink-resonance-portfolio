@@ -438,6 +438,98 @@ export default function InkResonancePage() {
     return () => navigationObserver.disconnect()
   }, [])
 
+  useEffect(() => {
+    const root = siteRef.current
+    if (!root) return
+
+    let scrollAnimationFrame: number | null = null
+    let previousInlineScrollBehavior = ''
+
+    const stopScrollAnimation = () => {
+      if (scrollAnimationFrame === null) return
+      window.cancelAnimationFrame(scrollAnimationFrame)
+      scrollAnimationFrame = null
+      document.documentElement.style.scrollBehavior = previousInlineScrollBehavior
+    }
+
+    const handleInternalNavigation = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        !(event.target instanceof Element)
+      ) return
+
+      const anchor = event.target.closest<HTMLAnchorElement>('a[href^="#"]')
+      if (!anchor || !root.contains(anchor)) return
+
+      const targetId = anchor.hash.slice(1)
+      if (!targetId || targetId.startsWith('qr-')) return
+
+      const target = document.getElementById(targetId)
+      if (!target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      event.preventDefault()
+      stopScrollAnimation()
+
+      const startY = window.scrollY
+      const headerHeight = root.querySelector('header')?.getBoundingClientRect().height ?? 0
+      const targetY = Math.max(0, target.getBoundingClientRect().top + startY - headerHeight - 14)
+      const distance = targetY - startY
+      const duration = Math.min(1450, Math.max(900, 720 + Math.abs(distance) * .12))
+      const startTime = window.performance.now()
+
+      if (window.location.hash !== anchor.hash) {
+        window.history.pushState(null, '', anchor.hash)
+      }
+
+      previousInlineScrollBehavior = document.documentElement.style.scrollBehavior
+      document.documentElement.style.scrollBehavior = 'auto'
+
+      const animateScroll = (timestamp: number) => {
+        const progress = Math.min(1, (timestamp - startTime) / duration)
+        const easedProgress = progress < .5
+          ? 4 * progress * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2
+
+        window.scrollTo(0, startY + distance * easedProgress)
+
+        if (progress < 1) {
+          scrollAnimationFrame = window.requestAnimationFrame(animateScroll)
+          return
+        }
+
+        scrollAnimationFrame = null
+        document.documentElement.style.scrollBehavior = previousInlineScrollBehavior
+      }
+
+      scrollAnimationFrame = window.requestAnimationFrame(animateScroll)
+    }
+
+    const handleScrollInterruption = () => stopScrollAnimation()
+    const handleKeyInterruption = (event: KeyboardEvent) => {
+      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
+        stopScrollAnimation()
+      }
+    }
+
+    root.addEventListener('click', handleInternalNavigation)
+    window.addEventListener('wheel', handleScrollInterruption, { passive: true })
+    window.addEventListener('touchstart', handleScrollInterruption, { passive: true })
+    window.addEventListener('keydown', handleKeyInterruption)
+
+    return () => {
+      stopScrollAnimation()
+      root.removeEventListener('click', handleInternalNavigation)
+      window.removeEventListener('wheel', handleScrollInterruption)
+      window.removeEventListener('touchstart', handleScrollInterruption)
+      window.removeEventListener('keydown', handleKeyInterruption)
+    }
+  }, [])
+
   return (
     <div className={styles.site} ref={siteRef}>
       <header className={styles.header}>
@@ -555,6 +647,7 @@ export default function InkResonancePage() {
               alt=""
               fill
               sizes="100vw"
+              loading="eager"
             />
           </div>
           <div className={styles.sectionMarker} data-reveal="marker">
@@ -900,8 +993,14 @@ export default function InkResonancePage() {
                           />
                           <span><Play size={18} fill="currentColor" /></span>
                         </button>
-                      ) : (
-                        <>
+                      ) : item.link ? (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.pressEditorialLink}
+                          aria-label={`Read the ${item.name} news report`}
+                        >
                           <Image
                             src={item.posterUrl || item.screenshotUrl || ''}
                             alt=""
@@ -917,7 +1016,15 @@ export default function InkResonancePage() {
                             className={styles.pressVisualSubject}
                             sizes="(max-width: 800px) 100vw, 48vw"
                           />
-                        </>
+                        </a>
+                      ) : (
+                        <Image
+                          src={item.posterUrl || item.screenshotUrl || ''}
+                          alt={`${item.name} coverage preview`}
+                          fill
+                          className={styles.pressVisualSubject}
+                          sizes="(max-width: 800px) 100vw, 48vw"
+                        />
                       )
                     ) : null}
                     <span className={styles.pressVisualLabel}>

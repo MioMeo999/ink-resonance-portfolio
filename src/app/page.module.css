@@ -5748,16 +5748,15 @@
 
 .motionReady [data-chapter] [data-reveal] {
   opacity: 0;
-  translate: 0 22px;
+  translate: 0 18px;
   transition:
-    clip-path .94s cubic-bezier(.16, 1, .3, 1),
-    opacity .78s ease,
-    translate .94s cubic-bezier(.16, 1, .3, 1);
+    opacity .9s ease,
+    translate 1.08s cubic-bezier(.16, 1, .3, 1);
   will-change: opacity, translate;
 }
 
 .motionReady [data-chapter] [data-reveal='heading'] {
-  clip-path: inset(0 0 100% 0);
+  clip-path: none;
 }
 
 .motionReady .chapterVisible [data-reveal] {
@@ -5766,23 +5765,23 @@
 }
 
 .motionReady .chapterVisible [data-reveal='heading'] {
-  clip-path: inset(0 0 0 0);
+  clip-path: none;
 }
 
 .motionReady .chapterVisible [data-reveal='marker'] {
-  transition-delay: .04s;
+  transition-delay: .06s;
 }
 
 .motionReady .chapterVisible [data-reveal='heading'] {
-  transition-delay: .14s;
+  transition-delay: .18s;
 }
 
 .motionReady .chapterVisible [data-reveal='copy'] {
-  transition-delay: .26s;
+  transition-delay: .3s;
 }
 
 .motionReady .chapterVisible [data-reveal='visual'] {
-  transition-delay: .38s;
+  transition-delay: .42s;
 }
 
 .motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
@@ -5791,7 +5790,7 @@
 }
 
 .motionReady .chapterVisible .archiveMemoirCard {
-  animation: archiveMemoryIn .92s cubic-bezier(.16, 1, .3, 1) both;
+  animation: archiveMemoryIn 1.05s cubic-bezier(.16, 1, .3, 1) both;
   animation-delay: calc(.28s + var(--archive-index) * .08s);
 }
 
@@ -5854,6 +5853,63 @@
   transition:
     box-shadow .82s cubic-bezier(.16, 1, .3, 1),
     transform .82s cubic-bezier(.16, 1, .3, 1);
+}
+
+.storyHeadline h2,
+.practiceIntro h2,
+.researchCopy h2,
+.archiveHead h2,
+.videosHead h2,
+.coverageHead h2,
+.contact h2 {
+  overflow: visible;
+  text-wrap: balance;
+}
+
+.pressEditorialLink {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  color: inherit;
+  cursor: pointer;
+}
+
+.pressEditorialLink:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--red);
+  outline-offset: 6px;
+}
+
+@media (min-width: 1051px) {
+  .archiveHead {
+    grid-template-columns: .3fr minmax(0, 1.56fr) .58fr;
+    gap: clamp(38px, 3.4vw, 66px);
+  }
+
+  .archiveHead h2 {
+    max-width: 13ch;
+    font-size: clamp(3.5rem, 4.45vw, 5.25rem);
+    line-height: .94;
+  }
+
+  .archiveHead h2 em {
+    white-space: normal;
+  }
+
+  .researchCopy h2 {
+    max-width: 9ch;
+    padding-bottom: .07em;
+    font-size: clamp(4.25rem, 6.5vw, 7rem);
+    line-height: .84;
+  }
+
+  .contact h2 {
+    max-width: 13ch;
+    padding-block: .04em .08em;
+    font-size: clamp(5rem, 8.1vw, 8.25rem);
+    line-height: .86;
+  }
 }
 
 .researchPosterAction svg,
