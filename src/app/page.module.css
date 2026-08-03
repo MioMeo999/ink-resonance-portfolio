@@ -5590,6 +5590,38 @@
 }
 
 /* Editorial motion system */
+.site {
+  --motion-out: cubic-bezier(.23, 1, .32, 1);
+  --motion-soft: cubic-bezier(.16, 1, .3, 1);
+}
+
+.scrollProgress {
+  position: fixed;
+  top: 0;
+  right: 9px;
+  bottom: 0;
+  z-index: 120;
+  width: 1px;
+  background: rgba(174, 45, 35, .12);
+  pointer-events: none;
+}
+
+.scrollProgress > span {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--red-bright), rgba(174, 45, 35, .48));
+  transform: scaleY(0);
+  transform-origin: top;
+  will-change: transform;
+}
+
+.site [data-scroll-media] img {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0) scale(1.045);
+  transform-origin: center;
+  will-change: transform;
+}
+
 .desktopNav a {
   display: inline-flex;
   align-items: center;
@@ -5680,36 +5712,42 @@
 
 @keyframes heroNameIn {
   from {
+    filter: blur(6px);
     opacity: 0;
-    transform: translateY(18px);
+    transform: translate3d(0, 24px, 0);
   }
   to {
+    filter: blur(0);
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes heroInstrumentIn {
   from {
     clip-path: inset(0 100% 0 0);
+    filter: blur(5px);
     opacity: .16;
-    transform: translateX(-10px);
+    transform: translate3d(-14px, 0, 0);
   }
   to {
     clip-path: inset(0 0 0 0);
+    filter: blur(0);
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes heroDetailIn {
   from {
+    filter: blur(4px);
     opacity: 0;
-    transform: translateY(14px);
+    transform: translate3d(0, 18px, 0);
   }
   to {
+    filter: blur(0);
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -5726,12 +5764,14 @@
 
 @keyframes heroPortraitEditorialIn {
   from {
+    filter: blur(5px);
     opacity: 0;
-    transform: scale(.98) translateY(10px);
+    transform: translate3d(0, 16px, 0) scale(.985);
   }
   to {
+    filter: blur(0);
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -5747,44 +5787,77 @@
 }
 
 .motionReady [data-chapter] [data-reveal] {
+  --reveal-x: 0px;
+  --reveal-y: 28px;
+  filter: blur(5px);
   opacity: 0;
-  translate: 0 18px;
+  transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(.994);
   transition:
+    filter .9s ease,
     opacity .9s ease,
-    translate 1.08s cubic-bezier(.16, 1, .3, 1);
-  will-change: opacity, translate;
+    transform 1.18s var(--motion-soft);
+  transition-delay: calc(.08s + var(--reveal-delay, 0ms));
+  will-change: filter, opacity, transform;
 }
 
 .motionReady [data-chapter] [data-reveal='heading'] {
-  clip-path: none;
+  filter: none;
+  opacity: 1;
+  transform: none;
+  transition: none;
+  will-change: auto;
+}
+
+.motionReady [data-chapter] [data-reveal='heading'] [data-reveal-line] {
+  display: block;
+  filter: blur(8px);
+  opacity: 0;
+  transform: translate3d(0, .58em, 0);
+  transition:
+    filter .96s ease,
+    opacity .92s ease,
+    transform 1.18s var(--motion-out);
+  transition-delay: calc(.14s + var(--reveal-delay, 0ms) + var(--line-delay, 0ms));
+  will-change: filter, opacity, transform;
+}
+
+.motionReady [data-chapter] [data-reveal='marker'] {
+  --reveal-x: -14px;
+  --reveal-y: 0px;
+  filter: blur(2px);
+  transform: translate3d(var(--reveal-x), 0, 0);
+}
+
+.motionReady #story [data-reveal='visual'],
+.motionReady #research [data-reveal='visual'] {
+  --reveal-x: -26px;
+}
+
+.motionReady #practice [data-reveal='visual'],
+.motionReady #videos [data-reveal='visual'],
+.motionReady #media [data-reveal='visual'],
+.motionReady #contact [data-reveal='visual'] {
+  --reveal-x: 26px;
 }
 
 .motionReady .chapterVisible [data-reveal] {
+  filter: blur(0);
   opacity: 1;
-  translate: 0 0;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 .motionReady .chapterVisible [data-reveal='heading'] {
-  clip-path: none;
+  transform: none;
 }
 
-.motionReady .chapterVisible [data-reveal='marker'] {
-  transition-delay: .06s;
-}
-
-.motionReady .chapterVisible [data-reveal='heading'] {
-  transition-delay: .18s;
-}
-
-.motionReady .chapterVisible [data-reveal='copy'] {
-  transition-delay: .3s;
-}
-
-.motionReady .chapterVisible [data-reveal='visual'] {
-  transition-delay: .42s;
+.motionReady .chapterVisible [data-reveal='heading'] [data-reveal-line] {
+  filter: blur(0);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
+  filter: blur(3px);
   opacity: 0;
   translate: var(--archive-reveal-x, 0) 24px;
 }
@@ -5804,10 +5877,12 @@
 
 @keyframes archiveMemoryIn {
   from {
+    filter: blur(3px);
     opacity: 0;
     translate: var(--archive-reveal-x, 0) 24px;
   }
   to {
+    filter: blur(0);
     opacity: 1;
     translate: 0 0;
   }
@@ -5947,23 +6022,27 @@
 
 @keyframes pressReveal {
   from {
+    filter: blur(5px);
     opacity: 0;
-    transform: translateY(10px) scale(.992);
+    transform: translate3d(18px, 8px, 0) scale(.992);
   }
   to {
+    filter: blur(0);
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
 @keyframes pressCopyIn {
   from {
+    filter: blur(3px);
     opacity: 0;
-    transform: translateY(9px);
+    transform: translate3d(0, 13px, 0);
   }
   to {
+    filter: blur(0);
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -5983,6 +6062,19 @@
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .74s cubic-bezier(.16, 1, .3, 1);
+}
+
+.headerCta:active,
+.heroActions a:active,
+.practiceGrid a:active,
+.researchCopy > a:active,
+.archiveMore > summary:active,
+.videoMore > summary:active,
+.pressTabs label:active,
+.email:active,
+.socialProfiles a:active {
+  transform: scale(.98);
+  transition-duration: 140ms;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -6068,9 +6160,27 @@
   .motionReady [data-chapter] [data-reveal],
   .motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
     clip-path: none;
+    filter: none;
     opacity: 1;
+    transform: none;
     translate: none;
     transition: none;
+  }
+
+  .motionReady [data-chapter] [data-reveal='heading'] [data-reveal-line] {
+    filter: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .scrollProgress {
+    display: none;
+  }
+
+  .site [data-scroll-media] img {
+    transform: none !important;
+    will-change: auto;
   }
 
   .desktopNav a > span,

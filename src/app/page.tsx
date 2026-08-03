@@ -246,6 +246,7 @@ function ModernImage({
 
 export default function InkResonancePage() {
   const siteRef = useRef<HTMLDivElement>(null)
+  const scrollProgressRef = useRef<HTMLSpanElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedEngagement, setSelectedEngagement] = useState<(typeof engagementArchive)[number] | null>(null)
   const [activeSection, setActiveSection] = useState('story')
@@ -391,11 +392,30 @@ export default function InkResonancePage() {
     const chapters = Array.from(root.querySelectorAll<HTMLElement>('[data-chapter]'))
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+    chapters.forEach((chapter) => {
+      Array.from(chapter.querySelectorAll<HTMLElement>('[data-reveal]')).forEach((element, index) => {
+        element.style.setProperty('--reveal-delay', `${Math.min(index, 6) * 65}ms`)
+      })
+      chapter.querySelectorAll<HTMLElement>("[data-reveal='heading']").forEach((heading) => {
+        Array.from(heading.querySelectorAll<HTMLElement>('[data-reveal-line]')).forEach((line, index) => {
+          line.style.setProperty('--line-delay', `${index * 100}ms`)
+        })
+      })
+    })
+
     root.classList.add(styles.motionReady)
+
+    const revealHashChapter = () => {
+      const hash = window.location.hash.slice(1)
+      chapters.find((chapter) => chapter.id === hash)?.classList.add(styles.chapterVisible)
+    }
+
+    revealHashChapter()
+    window.addEventListener('hashchange', revealHashChapter)
 
     if (prefersReducedMotion || !('IntersectionObserver' in window)) {
       chapters.forEach((chapter) => chapter.classList.add(styles.chapterVisible))
-      return
+      return () => window.removeEventListener('hashchange', revealHashChapter)
     }
 
     const revealObserver = new IntersectionObserver(
@@ -411,7 +431,10 @@ export default function InkResonancePage() {
 
     chapters.forEach((chapter) => revealObserver.observe(chapter))
 
-    return () => revealObserver.disconnect()
+    return () => {
+      revealObserver.disconnect()
+      window.removeEventListener('hashchange', revealHashChapter)
+    }
   }, [])
 
   useEffect(() => {
@@ -532,6 +555,80 @@ export default function InkResonancePage() {
 
   useEffect(() => {
     const root = siteRef.current
+    const progressBar = scrollProgressRef.current
+    if (!root || !progressBar) return
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const driftItems = Array.from(root.querySelectorAll<HTMLElement>('[data-scroll-media]'))
+      .map((wrapper) => {
+        const image = wrapper.querySelector<HTMLElement>('img')
+        if (!image) return null
+
+        return {
+          current: 0,
+          image,
+          strength: Number.parseFloat(wrapper.dataset.scrollStrength ?? '16'),
+          target: 0,
+          wrapper,
+        }
+      })
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+
+    let animationFrame: number | null = null
+    let progressCurrent = 0
+    let progressTarget = 0
+
+    const renderScrollMotion = () => {
+      animationFrame = null
+      let shouldContinue = false
+
+      progressCurrent += (progressTarget - progressCurrent) * .14
+      if (Math.abs(progressTarget - progressCurrent) > .001) shouldContinue = true
+      progressBar.style.transform = `scaleY(${progressCurrent.toFixed(4)})`
+
+      if (!prefersReducedMotion) {
+        driftItems.forEach((item) => {
+          item.current += (item.target - item.current) * .09
+          if (Math.abs(item.target - item.current) > .08) shouldContinue = true
+          item.image.style.transform = `translate3d(0, ${item.current.toFixed(2)}px, 0) scale(1.045)`
+        })
+      }
+
+      if (shouldContinue) animationFrame = window.requestAnimationFrame(renderScrollMotion)
+    }
+
+    const scheduleScrollMotion = () => {
+      const scrollRange = document.documentElement.scrollHeight - window.innerHeight
+      progressTarget = scrollRange > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollRange)) : 0
+
+      if (!prefersReducedMotion) {
+        driftItems.forEach((item) => {
+          const rect = item.wrapper.getBoundingClientRect()
+          const viewportDistance = window.innerHeight + rect.height
+          const relativePosition = (rect.top + rect.height / 2 - window.innerHeight / 2) / viewportDistance
+          item.target = Math.max(-1, Math.min(1, relativePosition)) * item.strength
+        })
+      }
+
+      if (animationFrame === null) animationFrame = window.requestAnimationFrame(renderScrollMotion)
+    }
+
+    window.addEventListener('scroll', scheduleScrollMotion, { passive: true })
+    window.addEventListener('resize', scheduleScrollMotion)
+    scheduleScrollMotion()
+
+    return () => {
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame)
+      window.removeEventListener('scroll', scheduleScrollMotion)
+      window.removeEventListener('resize', scheduleScrollMotion)
+      driftItems.forEach((item) => {
+        item.image.style.transform = ''
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    const root = siteRef.current
     if (!root || !('ResizeObserver' in window)) return
 
     const grids = Array.from(
@@ -600,6 +697,9 @@ export default function InkResonancePage() {
 
   return (
     <div className={styles.site} ref={siteRef}>
+      <span className={styles.scrollProgress} aria-hidden="true">
+        <span ref={scrollProgressRef} />
+      </span>
       <header className={styles.header}>
         <a href="#home" className={styles.identity} aria-label="Lijun Zhang, home">
           <span className={styles.brandDot} aria-hidden="true" />
@@ -679,7 +779,7 @@ export default function InkResonancePage() {
             </div>
           </div>
 
-          <div className={styles.heroPortraitFrame}>
+          <div className={styles.heroPortraitFrame} data-scroll-media data-scroll-strength="18">
             <ModernImage
               src="/images/about-portrait.jpg"
               alt="Lijun Zhang playing the Guzheng"
@@ -709,7 +809,13 @@ export default function InkResonancePage() {
         </div>
 
         <section id="story" className={styles.story} data-chapter>
-          <div className={styles.storyBackdrop} aria-hidden="true" data-reveal="visual">
+          <div
+            className={styles.storyBackdrop}
+            aria-hidden="true"
+            data-reveal="visual"
+            data-scroll-media
+            data-scroll-strength="22"
+          >
             <Image
               src="/images/bg-home.jpg"
               alt=""
@@ -724,8 +830,8 @@ export default function InkResonancePage() {
           </div>
           <div className={styles.storyHeadline} data-reveal="heading">
             <span>My practice</span>
-            <h2>Music is not an object to preserve.</h2>
-            <h2><em>It is a place to meet.</em></h2>
+            <h2 data-reveal-line>Music is not an object to preserve.</h2>
+            <h2 data-reveal-line><em>It is a place to meet.</em></h2>
           </div>
           <div className={styles.storyBody} data-reveal="copy">
             <p>
@@ -754,7 +860,10 @@ export default function InkResonancePage() {
               <span>02</span>
               <p>ARTISTIC PRACTICE</p>
             </div>
-            <h2 data-reveal="heading">One practice.<br /><em>Three movements.</em></h2>
+            <h2 data-reveal="heading">
+              <span data-reveal-line>One practice.</span>
+              <em data-reveal-line>Three movements.</em>
+            </h2>
             <p data-reveal="copy">
               Tradition becomes contemporary when it is experienced together:
               on stage, through inquiry, and in community.
@@ -796,7 +905,12 @@ export default function InkResonancePage() {
         </section>
 
         <section id="research" className={styles.research} data-chapter>
-          <div className={styles.researchPoster} data-reveal="visual">
+          <div
+            className={styles.researchPoster}
+            data-reveal="visual"
+            data-scroll-media
+            data-scroll-strength="12"
+          >
             <a
               href={researchReportUrl}
               target="_blank"
@@ -822,7 +936,10 @@ export default function InkResonancePage() {
               <span>03</span>
               <p>FEATURED RESEARCH</p>
             </div>
-            <h2 data-reveal="heading">Sonic<br /><em>Belonging</em></h2>
+            <h2 data-reveal="heading">
+              <span data-reveal-line>Sonic</span>
+              <em data-reveal-line>Belonging</em>
+            </h2>
             <h3 data-reveal="copy">Co-designing community music spaces for wellbeing and social inclusion.</h3>
             <p data-reveal="copy">
               Supported by the Healthy Buildings Network at the University of
@@ -859,7 +976,10 @@ export default function InkResonancePage() {
               <span>04</span>
               <p>ACTIVITY ARCHIVE</p>
             </div>
-            <h2 data-reveal="heading">Rooms remembered,<br /><em>in sound and colour.</em></h2>
+            <h2 data-reveal="heading">
+              <span data-reveal-line>Rooms remembered,</span>
+              <em data-reveal-line>in sound and colour.</em>
+            </h2>
             <p data-reveal="copy">
               A travelling memoir of performances, workshops, collaborations,
               and the people encountered along the way.
@@ -896,7 +1016,10 @@ export default function InkResonancePage() {
             </div>
             <div data-reveal="heading">
               <span>Selected by the artist</span>
-              <h2>Watch the music<br /><em>in motion.</em></h2>
+              <h2>
+                <span data-reveal-line>Watch the music</span>
+                <em data-reveal-line>in motion.</em>
+              </h2>
             </div>
             <p data-reveal="copy">
               A performance-led collection of solo work, ensembles, and
@@ -982,7 +1105,10 @@ export default function InkResonancePage() {
               <span aria-hidden="true" />
               <p>COVERAGE</p>
             </div>
-            <h2 data-reveal="heading">Covered by international media, and by the institutions I work alongside.</h2>
+            <h2 data-reveal="heading">
+              <span data-reveal-line>Covered by international media, and by</span>
+              <span data-reveal-line>the institutions I work alongside.</span>
+            </h2>
           </div>
 
           <div className={styles.pressSwitcher} data-reveal="visual">
@@ -1160,7 +1286,10 @@ export default function InkResonancePage() {
             <span>07 / CONTACT</span>
             <span>Performance · Research · Education · Collaboration</span>
           </div>
-          <h2 data-reveal="heading">Let&apos;s make<br /><em>a place to meet.</em></h2>
+          <h2 data-reveal="heading">
+            <span data-reveal-line>Let&apos;s make</span>
+            <em data-reveal-line>a place to meet.</em>
+          </h2>
           <a href="mailto:zhanglijun109@gmail.com" className={styles.email} data-reveal="copy">
             <Mail size={24} />
             <span>zhanglijun109@gmail.com</span>
