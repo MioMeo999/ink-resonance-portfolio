@@ -4363,18 +4363,11 @@
   }
 
 .mobileNav a {
-    display: grid;
-    grid-template-columns: 45px 1fr;
+    display: block;
     border-bottom: 1px solid rgba(255, 255, 255, .16);
     padding: 16px 0;
   font-family: var(--font-display, Georgia), Georgia, serif;
     font-size: 1.4375rem;
-  }
-
-.mobileNav span {
-    color: var(--red-bright);
-    font-family: var(--font-sans), Arial, sans-serif;
-    font-size: 0.6875rem;
   }
 
   .hero {
@@ -5629,30 +5622,9 @@
   transition: color .56s ease;
 }
 
-.desktopNav a > span {
-  display: inline-block;
-  overflow: hidden;
-  max-width: 0;
-  margin-right: 0;
-  color: var(--red);
-  font-size: .58rem;
-  letter-spacing: .08em;
-  opacity: 0;
-  transition:
-    max-width .68s cubic-bezier(.16, 1, .3, 1),
-    margin-right .68s cubic-bezier(.16, 1, .3, 1),
-    opacity .46s ease;
-}
-
 .desktopNav .navActive,
 .mobileNav .navActive {
   color: var(--red);
-}
-
-.desktopNav .navActive > span {
-  max-width: 2.4em;
-  margin-right: 7px;
-  opacity: 1;
 }
 
 .desktopNav .navActive::after {
@@ -6183,7 +6155,6 @@
     will-change: auto;
   }
 
-  .desktopNav a > span,
   .researchPoster > a,
   .researchPosterAction svg,
   .videoInfo small::after,

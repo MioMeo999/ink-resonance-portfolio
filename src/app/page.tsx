@@ -81,12 +81,12 @@ const formatEngagementDate = (date: string) => {
 }
 
 const navItems = [
-  { href: '#story', label: 'About', chapter: '01' },
-  { href: '#practice', label: 'Approach', chapter: '02' },
-  { href: '#research', label: 'Research', chapter: '03' },
-  { href: '#archive', label: 'Engagements', chapter: '04' },
-  { href: '#videos', label: 'Watch', chapter: '05' },
-  { href: '#media', label: 'Press', chapter: '06' },
+  { href: '#story', label: 'About' },
+  { href: '#practice', label: 'Approach' },
+  { href: '#research', label: 'Research' },
+  { href: '#archive', label: 'Engagements' },
+  { href: '#videos', label: 'Watch' },
+  { href: '#media', label: 'Press' },
 ]
 
 type ViewTransitionDocument = Document & {
@@ -714,7 +714,7 @@ export default function InkResonancePage() {
               aria-current={activeSection === item.href.slice(1) ? 'page' : undefined}
               key={item.href}
             >
-              <span>{item.chapter}</span>{item.label}
+              {item.label}
             </a>
           ))}
         </nav>
@@ -743,7 +743,7 @@ export default function InkResonancePage() {
                 key={item.href}
                 onClick={() => setMenuOpen(false)}
               >
-                <span>{item.chapter}</span>{item.label}
+                {item.label}
               </a>
             ))}
           </nav>
