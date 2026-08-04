@@ -3046,14 +3046,6 @@
   }
 }
 
-.qrModal {
-  display: none;
-}
-
-.qrModal:target {
-  display: grid;
-}
-
 .qrModalImage::after {
   display: none;
 }
@@ -3725,7 +3717,8 @@
   }
 }
 
-.qrModalHead > a {
+.qrModalHead > a,
+.qrModalHead > button {
   display: grid;
   width: 38px;
   height: 38px;
