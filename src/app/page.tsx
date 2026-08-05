@@ -439,6 +439,7 @@ export default function InkResonancePage() {
     // on the next frame so nothing animates on the way *into* hiding.
     root.classList.add(styles.motionBoot, styles.motionReady)
     void root.offsetWidth
+    let revealFrame = 0
     const bootFrame = window.requestAnimationFrame(() => {
       root.classList.remove(styles.motionBoot)
     })
@@ -452,9 +453,17 @@ export default function InkResonancePage() {
     window.addEventListener('hashchange', revealHashChapter)
 
     if (prefersReducedMotion || !('IntersectionObserver' in window)) {
-      chapters.forEach((chapter) => chapter.classList.add(styles.chapterVisible))
+      // Wait for the frame after the boot class is dropped, otherwise the
+      // reveal coalesces with it and the gentle fade is skipped entirely.
+      revealFrame = window.requestAnimationFrame(() => {
+        revealFrame = window.requestAnimationFrame(() => {
+          chapters.forEach((chapter) => chapter.classList.add(styles.chapterVisible))
+        })
+      })
+
       return () => {
         window.cancelAnimationFrame(bootFrame)
+        window.cancelAnimationFrame(revealFrame)
         window.removeEventListener('hashchange', revealHashChapter)
       }
     }
@@ -474,6 +483,7 @@ export default function InkResonancePage() {
 
     return () => {
       window.cancelAnimationFrame(bootFrame)
+      window.cancelAnimationFrame(revealFrame)
       revealObserver.disconnect()
       window.removeEventListener('hashchange', revealHashChapter)
     }
