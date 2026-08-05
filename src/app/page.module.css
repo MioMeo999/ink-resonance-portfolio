@@ -109,7 +109,7 @@
   content: '';
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .25s ease;
+  transition: transform var(--quick) ease;
 }
 
 .desktopNav a:hover::after,
@@ -252,7 +252,7 @@
   background: var(--ink);
   padding: 0 22px;
   color: var(--paper);
-  transition: background .25s ease, border-color .25s ease;
+  transition: background var(--quick) ease, border-color var(--quick) ease;
 }
 
 .heroActions a:first-child:hover {
@@ -277,15 +277,15 @@
   mix-blend-mode: color;
   opacity: .58;
   pointer-events: none;
-  transition: opacity .55s cubic-bezier(.16, 1, .3, 1);
+  transition: opacity var(--hover) var(--ease-out);
 }
 
 .modernImage img {
   object-fit: cover;
   filter: grayscale(1) contrast(1.28) brightness(1.02);
   transition:
-    filter .65s cubic-bezier(.16, 1, .3, 1),
-    transform .8s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover) var(--ease-out),
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .modernImage:hover::after {
@@ -305,7 +305,7 @@
   width: 54px;
   height: 7px;
   background: var(--red-bright);
-  transition: width .45s cubic-bezier(.16, 1, .3, 1);
+  transition: width var(--hover) var(--ease-out);
 }
 
 .modernImage:hover .imageSignal {
@@ -540,7 +540,7 @@
   justify-content: flex-end;
   border-right: 1px solid rgba(255, 255, 255, .17);
   padding: 3vw 2.5vw;
-  transition: background .35s ease, color .35s ease;
+  transition: background var(--quick) ease, color var(--quick) ease;
 }
 
 .practiceGrid article:hover {
@@ -670,8 +670,8 @@
   letter-spacing: .15em;
   backdrop-filter: blur(8px);
   transition:
-    background .35s ease,
-    transform .55s cubic-bezier(.16, 1, .3, 1);
+    background var(--quick) ease,
+    transform var(--hover) var(--ease-out);
 }
 
 .researchPoster > a:hover .researchPosterAction,
@@ -910,7 +910,7 @@
   background: linear-gradient(135deg, rgba(28, 55, 72, .62), rgba(170, 36, 29, .32));
   content: '';
   mix-blend-mode: color;
-  transition: opacity .5s ease;
+  transition: opacity var(--hover) ease;
 }
 
 .videoThumb img {
@@ -918,7 +918,7 @@
   height: 100%;
   object-fit: cover;
   filter: grayscale(1) contrast(1.14) brightness(.78);
-  transition: filter .55s ease, transform .7s cubic-bezier(.16, 1, .3, 1);
+  transition: filter var(--hover) ease, transform var(--hover-slow) var(--ease-out);
 }
 
 .videoGrid a:hover .videoThumb::after {
@@ -938,7 +938,7 @@
   width: 44px;
   height: 6px;
   background: var(--red-bright);
-  transition: width .45s cubic-bezier(.16, 1, .3, 1);
+  transition: width var(--hover) var(--ease-out);
 }
 
 .videoGrid a:hover .videoWash {
@@ -960,7 +960,7 @@
   color: white;
   transform: translate(-50%, -50%);
   backdrop-filter: blur(8px);
-  transition: background .3s ease, transform .3s ease;
+  transition: background var(--quick) ease, transform var(--quick) ease;
 }
 
 .videoGrid a:hover .videoPlay {
@@ -1133,9 +1133,9 @@
   color: var(--paper);
   cursor: pointer;
   transition:
-    border-color .35s ease,
-    background .35s ease,
-    transform .35s cubic-bezier(.16, 1, .3, 1);
+    border-color var(--quick) ease,
+    background var(--quick) ease,
+    transform var(--quick) var(--ease-out);
 }
 
 .qrList > a:hover,
@@ -1162,14 +1162,14 @@
   mix-blend-mode: color;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .4s ease;
+  transition: opacity var(--hover) ease;
 }
 
 .qrList img {
   display: block;
   background: white;
   filter: grayscale(1) contrast(1.15);
-  transition: filter .4s ease, transform .55s cubic-bezier(.16, 1, .3, 1);
+  transition: filter var(--hover) ease, transform var(--hover) var(--ease-out);
 }
 
 .qrList > a:hover .qrImage::after,
@@ -1577,7 +1577,7 @@
 }
 
 .affiliations a {
-  transition: color .2s ease;
+  transition: color var(--quick) ease;
 }
 
 .affiliations a:hover,
@@ -1727,7 +1727,7 @@
   content: '';
   opacity: 0;
   pointer-events: none;
-  transition: opacity .45s ease;
+  transition: opacity var(--hover) ease;
   -webkit-mask:
     linear-gradient(#fff 0 0) padding-box,
     linear-gradient(#fff 0 0);
@@ -1801,8 +1801,8 @@
   filter: none !important;
   transform: scale(.99) !important;
   transition:
-    filter .7s ease,
-    transform .9s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover-slow) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .pressVideoTrigger:hover .pressVisualBackdrop,
@@ -1821,9 +1821,9 @@
   filter: grayscale(1) brightness(0) saturate(0) !important;
   opacity: .66;
   transition:
-    filter .78s cubic-bezier(.22, .61, .36, 1),
-    opacity .62s ease,
-    transform .78s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover-slow) var(--ease-out),
+    opacity var(--hover) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .pressTabs > label:hover .pressLogo img,
@@ -1860,7 +1860,7 @@
   );
   box-shadow: 0 2px 9px rgba(174, 45, 35, .14);
   transform-origin: center;
-  transition: transform .76s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover-slow) var(--ease-out);
 }
 
 /* Compact orientation-aware activity timeline */
@@ -1959,8 +1959,8 @@
   transform: translateY(var(--memoir-lift)) rotate(var(--memoir-tilt));
   transform-origin: 50% 10%;
   transition:
-    filter .65s ease,
-    transform .9s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .archiveMemoirCard:nth-child(6n + 1) {
@@ -2038,7 +2038,7 @@
     0 0 0 1px rgba(174, 45, 35, .3),
     0 5px 14px rgba(31, 28, 24, .18);
   transform: translateX(-50%);
-  transition: transform .55s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
 .archiveMemoirPhoto {
@@ -2052,8 +2052,8 @@
     0 28px 58px rgba(48, 38, 30, .14),
     0 6px 18px rgba(48, 38, 30, .08);
   transition:
-    box-shadow .85s ease,
-    transform .9s cubic-bezier(.16, 1, .3, 1);
+    box-shadow var(--hover-slow) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .archiveReportCue {
@@ -2076,8 +2076,8 @@
   letter-spacing: .14em;
   transform: translateY(6px);
   transition:
-    opacity .45s ease,
-    transform .7s cubic-bezier(.16, 1, .3, 1);
+    opacity var(--hover) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .archiveMemoirCardWide .archiveMemoirPhoto,
@@ -2101,15 +2101,15 @@
     radial-gradient(ellipse at center, transparent 60%, rgba(31, 28, 24, .14) 100%);
   content: '';
   pointer-events: none;
-  transition: opacity .65s ease;
+  transition: opacity var(--hover) ease;
 }
 
 .archiveMemoirPhoto img {
   object-fit: cover;
   filter: saturate(.84) contrast(1.025);
   transition:
-    filter .8s ease,
-    transform 1.05s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover-slow) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .archiveMemoirCaption {
@@ -2131,8 +2131,8 @@
   text-align: left;
   transform: rotate(calc(var(--memoir-tilt) * -.32));
   transition:
-    box-shadow .7s ease,
-    transform .85s cubic-bezier(.16, 1, .3, 1);
+    box-shadow var(--hover-slow) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .archiveMemoirMeta {
@@ -2261,8 +2261,8 @@
   letter-spacing: .18em;
   list-style: none;
   transition:
-    border-color .45s ease,
-    color .35s ease;
+    border-color var(--hover) ease,
+    color var(--quick) ease;
 }
 
 .archiveMore > summary::-webkit-details-marker {
@@ -2280,7 +2280,7 @@
 .archiveMore > summary span {
   font-size: 1.25rem;
   font-weight: 300;
-  transition: transform .65s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
 .archiveMore[open] > summary span {
@@ -2348,7 +2348,7 @@
   overflow: hidden;
   background: var(--paper);
   box-shadow: 0 40px 110px rgba(0, 0, 0, .4);
-  animation: memoirPanelIn .55s cubic-bezier(.16, 1, .3, 1) both;
+  animation: memoirPanelIn .55s var(--ease-out) both;
 }
 
 .memoirModalClose {
@@ -2366,7 +2366,7 @@
   color: var(--ink);
   cursor: pointer;
   backdrop-filter: blur(8px);
-  transition: background .25s ease, color .25s ease, transform .35s ease;
+  transition: background var(--quick) ease, color var(--quick) ease, transform var(--quick) ease;
 }
 
 .memoirModalClose:hover,
@@ -2552,7 +2552,7 @@
     radial-gradient(ellipse at center, transparent 52%, rgba(19, 16, 13, .22));
   content: '';
   pointer-events: none;
-  transition: opacity .55s ease;
+  transition: opacity var(--hover) ease;
 }
 
 .pressFeatureVideo .pressVisualLabel {
@@ -2615,7 +2615,7 @@
   padding: 0 !important;
   filter: drop-shadow(18px 24px 28px rgba(48, 38, 30, .2)) !important;
   transform: rotate(-1.8deg) scale(.96) !important;
-  animation: editorialPageIn .72s cubic-bezier(.16, 1, .3, 1) both;
+  animation: editorialPageIn .72s var(--ease-out) both;
 }
 
 .pressFeatureEditorial .pressVisualLabel {
@@ -2644,9 +2644,9 @@
 
 .pressLogo img {
   transition:
-    filter .72s cubic-bezier(.22, .61, .36, 1),
-    opacity .58s ease,
-    transform .72s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover-slow) var(--ease-out),
+    opacity var(--hover) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .pressTabs > label::after {
@@ -2664,7 +2664,7 @@
   );
   box-shadow: 0 2px 8px rgba(174, 45, 35, .16);
   transform-origin: center;
-  transition: transform .68s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
 .pressTabs > label:hover .pressLogo img,
@@ -2827,7 +2827,7 @@
   text-transform: uppercase;
   letter-spacing: .17em;
   list-style: none;
-  transition: background .25s ease, color .25s ease, border-color .25s ease;
+  transition: background var(--quick) ease, color var(--quick) ease, border-color var(--quick) ease;
 }
 
 .videoMore > summary::-webkit-details-marker {
@@ -2845,7 +2845,7 @@
 .videoMore > summary span {
   font-size: 1.375rem;
   font-weight: 400;
-  transition: transform .25s ease;
+  transition: transform var(--quick) ease;
 }
 
 .videoMore[open] > summary span {
@@ -3006,9 +3006,9 @@
 
 .qrList > a {
   transition:
-    transform .35s cubic-bezier(.16, 1, .3, 1),
-    box-shadow .35s ease,
-    border-color .25s ease;
+    transform var(--quick) var(--ease-out),
+    box-shadow var(--quick) ease,
+    border-color var(--quick) ease;
 }
 
 .qrList > a:hover,
@@ -3032,7 +3032,7 @@
 }
 
 .qrModalPanel {
-  animation: qrEnter .4s cubic-bezier(.16, 1, .3, 1) both;
+  animation: qrEnter .4s var(--ease-out) both;
 }
 
 @keyframes qrEnter {
@@ -3146,7 +3146,7 @@
 
 .pressLogo img {
   opacity: .66;
-  transition: filter .45s ease, opacity .45s ease, transform .55s cubic-bezier(.16, 1, .3, 1);
+  transition: filter var(--hover) ease, opacity var(--hover) ease, transform var(--hover) var(--ease-out);
 }
 
 .pressLogo {
@@ -3175,7 +3175,7 @@
 }
 
 .pressFeatureActive {
-  animation: pressReveal .62s cubic-bezier(.16, 1, .3, 1) both;
+  animation: pressReveal var(--hover-slow) var(--ease-out) both;
 }
 
 .pressFeatureVisual {
@@ -3198,7 +3198,7 @@
 }
 
 .pressVideoTrigger img {
-  transition: transform .8s cubic-bezier(.22, .61, .36, 1), filter .6s ease;
+  transition: transform var(--hover-slow) var(--ease-out), filter var(--hover) ease;
 }
 
 .pressVideoTrigger > span {
@@ -3217,7 +3217,7 @@
   opacity: .92;
   transform: translate(-50%, -50%);
   backdrop-filter: blur(7px);
-  transition: background .3s ease, color .3s ease, transform .4s cubic-bezier(.22, .61, .36, 1);
+  transition: background var(--quick) ease, color var(--quick) ease, transform var(--hover) var(--ease-out);
 }
 
 .pressVideoTrigger:hover img,
@@ -3265,7 +3265,7 @@
   border: 1px solid rgba(244, 239, 230, .28);
   background: #17130f;
   box-shadow: 0 34px 90px rgba(0, 0, 0, .44);
-  animation: pressVideoIn .5s cubic-bezier(.16, 1, .3, 1) both;
+  animation: pressVideoIn .5s var(--ease-out) both;
 }
 
 .pressVideoHead {
@@ -3294,7 +3294,7 @@
   padding: 0;
   color: inherit;
   cursor: pointer;
-  transition: background .25s ease, transform .25s ease;
+  transition: background var(--quick) ease, transform var(--quick) ease;
 }
 
 .pressVideoHead a:hover,
@@ -3465,7 +3465,7 @@
   content: '';
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .5s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
 .pressTabs > label:hover::after,
@@ -3490,14 +3490,14 @@
 
 .pressFeatureActive {
   display: grid;
-  animation: pressReveal .52s cubic-bezier(.22, .61, .36, 1) both;
+  animation: pressReveal var(--hover-slow) var(--ease-out) both;
 }
 
 .pressSwitcher:has(input[id='press-control-1']:checked) [id='press-1'],
 .pressSwitcher:has(input[id='press-control-2']:checked) [id='press-2'],
 .pressSwitcher:has(input[id='press-control-3']:checked) [id='press-3'] {
   display: grid;
-  animation: pressReveal .52s cubic-bezier(.22, .61, .36, 1) both;
+  animation: pressReveal var(--hover-slow) var(--ease-out) both;
 }
 
 .pressFeaturePortrait {
@@ -3538,7 +3538,7 @@
 }
 
 .researchPoster {
-  transition: transform .8s cubic-bezier(.22, .61, .36, 1);
+  transition: transform var(--hover-slow) var(--ease-out);
 }
 
 .researchPoster:hover {
@@ -3559,11 +3559,11 @@
 }
 
 .heroWords {
-  animation: heroCopyIn .8s cubic-bezier(.22, .61, .36, 1) both;
+  animation: heroCopyIn .8s var(--ease-out) both;
 }
 
 .heroPortraitFrame {
-  animation: heroPortraitIn 1s .08s cubic-bezier(.22, .61, .36, 1) both;
+  animation: heroPortraitIn 1s .08s var(--ease-out) both;
 }
 
 @keyframes heroCopyIn {
@@ -3988,9 +3988,9 @@
   filter: grayscale(1) brightness(0) saturate(0) !important;
   opacity: .66;
   transition:
-    filter .78s cubic-bezier(.22, .61, .36, 1),
-    opacity .62s ease,
-    transform .78s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover-slow) var(--ease-out),
+    opacity var(--hover) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .pressTabs > label:hover .pressLogo img,
@@ -4017,7 +4017,7 @@
   );
   box-shadow: 0 2px 9px rgba(174, 45, 35, .14);
   transform-origin: center;
-  transition: transform .76s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover-slow) var(--ease-out);
 }
 
 /* Borderless coverage covers: film stills and an editorial page */
@@ -4132,11 +4132,11 @@
 
 .videos .videoMore > summary {
   transition:
-    border-color .45s ease,
-    background .45s ease,
-    box-shadow .55s cubic-bezier(.16, 1, .3, 1),
-    color .35s ease,
-    transform .55s cubic-bezier(.16, 1, .3, 1);
+    border-color var(--hover) ease,
+    background var(--hover) ease,
+    box-shadow var(--hover) var(--ease-out),
+    color var(--quick) ease,
+    transform var(--hover) var(--ease-out);
 }
 
 .videos .videoMore > summary:hover,
@@ -4155,8 +4155,8 @@
 .videos .videoMore > summary span {
   color: rgba(244, 239, 231, .72);
   transition:
-    color .4s ease,
-    transform .6s cubic-bezier(.16, 1, .3, 1);
+    color var(--hover) ease,
+    transform var(--hover) var(--ease-out);
 }
 
 .videos .videoMore[open] > summary span {
@@ -4187,15 +4187,15 @@
   text-transform: uppercase;
   letter-spacing: .16em;
   transition:
-    border-color .4s ease,
-    background .4s ease,
-    color .35s ease,
-    transform .55s cubic-bezier(.16, 1, .3, 1);
+    border-color var(--hover) ease,
+    background var(--hover) ease,
+    color var(--quick) ease,
+    transform var(--hover) var(--ease-out);
 }
 
 .contactDetails .socialProfiles a svg {
   color: #d75a4e;
-  transition: transform .55s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
 .contactDetails .socialProfiles a span {
@@ -5575,10 +5575,39 @@
   }
 }
 
-/* Editorial motion system */
+/*
+ * Editorial motion system
+ *
+ * One scale for the whole page. Entrances share a duration and a curve so a
+ * heading, the paragraph under it and the image beside it read as a single
+ * gesture rather than three unrelated ones. Travel is expressed in `em` so
+ * every element moves by the same proportion of its own size — a 7rem section
+ * title sweeps further than a caption, but at the same ratio, which is what
+ * keeps large and small type feeling related.
+ *
+ * Anything a pointer triggers stays under 300ms; entrances are allowed to be
+ * slower because they happen once, unprompted, and carry the page's character.
+ */
 .site {
-  --motion-out: cubic-bezier(.23, 1, .32, 1);
-  --motion-soft: cubic-bezier(.16, 1, .3, 1);
+  /* Entrance scale. One base, one longer step for large media. */
+  --enter: .72s;
+  --enter-lg: .92s;
+  --step: 70ms;
+
+  /* Response scale — all well under the 300ms perceived-lag threshold. */
+  --hover: 240ms;
+  --hover-slow: 280ms;
+  --quick: 180ms;
+  --tap: 140ms;
+
+  /* Travel and the blur that masks the crossfade. */
+  --rise: .5em;
+  --rise-media: 20px;
+  --enter-blur: 5px;
+
+  /* Kept so any rule still naming the old tokens stays on the same curve. */
+  --motion-out: var(--ease-out);
+  --motion-soft: var(--ease-out);
 }
 
 .scrollProgress {
@@ -5612,7 +5641,7 @@
   display: inline-flex;
   align-items: center;
   color: inherit;
-  transition: color .56s ease;
+  transition: color var(--hover) ease;
 }
 
 .desktopNav .navActive,
@@ -5628,46 +5657,51 @@
   animation: none;
 }
 
+/*
+ * The hero opens on the same step as every chapter cascade below it, so the
+ * page has one tempo from the first paint rather than a bespoke intro
+ * sequence that the rest never picks up.
+ */
 .heroIndex {
-  animation: heroLabelIn .62s .06s cubic-bezier(.22, .61, .36, 1) both;
+  animation: heroLabelIn var(--enter) 0ms var(--ease-out) both;
 }
 
 .heroName {
-  animation: heroNameIn .88s .16s cubic-bezier(.16, 1, .3, 1) both;
+  animation: heroNameIn var(--enter) calc(var(--step) * 1) var(--ease-out) both;
 }
 
 .heroInstrument {
-  animation: heroInstrumentIn .98s .3s cubic-bezier(.16, 1, .3, 1) both;
+  animation: heroInstrumentIn var(--enter-lg) calc(var(--step) * 2) var(--ease-out) both;
+}
+
+.heroPortraitFrame {
+  animation: heroPortraitEditorialIn var(--enter-lg) calc(var(--step) * 3) var(--ease-out) both;
 }
 
 .heroTagline {
-  animation: heroDetailIn .78s .54s cubic-bezier(.22, .61, .36, 1) both;
+  animation: heroDetailIn var(--enter) calc(var(--step) * 4) var(--ease-out) both;
 }
 
 .heroStatement > span {
   transform-origin: top;
-  animation: heroRuleIn .9s .64s cubic-bezier(.16, 1, .3, 1) both;
+  animation: heroRuleIn var(--enter) calc(var(--step) * 5) var(--ease-out) both;
 }
 
 .heroStatement > div {
-  animation: heroDetailIn .78s .66s cubic-bezier(.22, .61, .36, 1) both;
+  animation: heroDetailIn var(--enter) calc(var(--step) * 6) var(--ease-out) both;
 }
 
 .heroActions {
-  animation: heroDetailIn .75s .82s cubic-bezier(.22, .61, .36, 1) both;
-}
-
-.heroPortraitFrame {
-  animation: heroPortraitEditorialIn 1.12s .28s cubic-bezier(.16, 1, .3, 1) both;
+  animation: heroDetailIn var(--enter) calc(var(--step) * 7) var(--ease-out) both;
 }
 
 .heroSideNote,
 .scrollCue {
-  animation: heroLabelIn .62s .94s ease both;
+  animation: heroLabelIn var(--enter) calc(var(--step) * 8) var(--ease-out) both;
 }
 
 .affiliations {
-  animation: heroAffiliationsIn .72s 1.04s cubic-bezier(.22, .61, .36, 1) both;
+  animation: heroAffiliationsIn var(--enter) calc(var(--step) * 9) var(--ease-out) both;
 }
 
 @keyframes heroLabelIn {
@@ -5677,29 +5711,32 @@
 
 @keyframes heroNameIn {
   from {
-    filter: blur(6px);
+    filter: blur(var(--enter-blur));
     opacity: 0;
-    transform: translate3d(0, 24px, 0);
+    translate: 0 var(--rise);
   }
   to {
     filter: blur(0);
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    translate: 0 0;
   }
 }
 
+/*
+ * The instrument wordmark keeps its horizontal wipe — it is the one deliberate
+ * off-axis move on the page, and it reads as a signature rather than drift
+ * because nothing else competes with it.
+ */
 @keyframes heroInstrumentIn {
   from {
     clip-path: inset(0 100% 0 0);
-    filter: blur(5px);
+    filter: blur(var(--enter-blur));
     opacity: .16;
-    transform: translate3d(-14px, 0, 0);
   }
   to {
     clip-path: inset(0 0 0 0);
     filter: blur(0);
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -5707,12 +5744,12 @@
   from {
     filter: blur(4px);
     opacity: 0;
-    transform: translate3d(0, 18px, 0);
+    translate: 0 var(--rise);
   }
   to {
     filter: blur(0);
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    translate: 0 0;
   }
 }
 
@@ -5729,122 +5766,113 @@
 
 @keyframes heroPortraitEditorialIn {
   from {
-    filter: blur(5px);
+    filter: blur(var(--enter-blur));
     opacity: 0;
-    transform: translate3d(0, 16px, 0) scale(.985);
+    translate: 0 var(--rise-media);
   }
   to {
     filter: blur(0);
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    translate: 0 0;
   }
 }
 
 @keyframes heroAffiliationsIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    translate: 0 var(--rise);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 }
 
-.motionReady [data-chapter] [data-reveal] {
-  --reveal-x: 0px;
-  --reveal-y: 28px;
-  filter: blur(5px);
+/*
+ * Every element in a chapter arrives the same way: it rises on Y, resolves a
+ * blur and fades up. Heading lines are not a special case any more — they are
+ * simply the first entries in the chapter's cascade, which is what makes the
+ * body copy read as a continuation of the title instead of a separate event.
+ *
+ * The three properties share one duration on purpose. When transform outlasts
+ * opacity the element finishes fading before it stops moving, and the drift
+ * afterwards is what made the old version feel loose.
+ */
+.motionReady [data-chapter] [data-reveal],
+.motionReady [data-chapter] [data-reveal-line] {
+  filter: blur(var(--enter-blur));
   opacity: 0;
-  transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(.994);
+  translate: 0 var(--rise);
   transition:
-    filter .9s ease,
-    opacity .9s ease,
-    transform 1.18s var(--motion-soft);
-  transition-delay: calc(.08s + var(--reveal-delay, 0ms));
-  will-change: filter, opacity, transform;
+    filter var(--enter) var(--ease-out),
+    opacity var(--enter) linear,
+    translate var(--enter) var(--ease-out);
+  transition-delay: var(--enter-delay, 0ms);
 }
 
+/*
+ * `motionReady` is applied after first paint, so without this the hidden state
+ * would itself be transitioned into — content appeared, faded out, then faded
+ * back in. The boot class is removed on the next frame, once the hidden state
+ * has been committed silently.
+ */
+.motionBoot [data-chapter] [data-reveal],
+.motionBoot [data-chapter] [data-reveal-line],
+.motionBoot .archiveMemoirCard {
+  transition: none !important;
+  animation: none !important;
+}
+
+/*
+ * The heading element is only a wrapper; its lines carry the motion. Leaving
+ * it animated too would double the blur and travel on the largest type.
+ */
 .motionReady [data-chapter] [data-reveal='heading'] {
   filter: none;
   opacity: 1;
-  transform: none;
+  translate: none;
   transition: none;
-  will-change: auto;
 }
 
-.motionReady [data-chapter] [data-reveal='heading'] [data-reveal-line] {
+.motionReady [data-chapter] [data-reveal-line] {
   display: block;
-  filter: blur(8px);
-  opacity: 0;
-  transform: translate3d(0, .58em, 0);
-  transition:
-    filter .96s ease,
-    opacity .92s ease,
-    transform 1.18s var(--motion-out);
-  transition-delay: calc(.14s + var(--reveal-delay, 0ms) + var(--line-delay, 0ms));
-  will-change: filter, opacity, transform;
 }
 
-.motionReady [data-chapter] [data-reveal='marker'] {
-  --reveal-x: -14px;
-  --reveal-y: 0px;
-  filter: blur(2px);
-  transform: translate3d(var(--reveal-x), 0, 0);
+/* Media is heavier, so it gets the longer step and travels a fixed distance. */
+.motionReady [data-chapter] [data-reveal='visual'] {
+  --rise: var(--rise-media);
+  transition-duration: var(--enter-lg);
 }
 
-.motionReady #story [data-reveal='visual'],
-.motionReady #research [data-reveal='visual'] {
-  --reveal-x: -26px;
-}
-
-.motionReady #practice [data-reveal='visual'],
-.motionReady #videos [data-reveal='visual'],
-.motionReady #media [data-reveal='visual'],
-.motionReady #contact [data-reveal='visual'] {
-  --reveal-x: 26px;
-}
-
-.motionReady .chapterVisible [data-reveal] {
+.motionReady .chapterVisible [data-reveal],
+.motionReady .chapterVisible [data-reveal-line] {
   filter: blur(0);
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
+  translate: 0 0;
 }
 
-.motionReady .chapterVisible [data-reveal='heading'] {
-  transform: none;
-}
-
-.motionReady .chapterVisible [data-reveal='heading'] [data-reveal-line] {
-  filter: blur(0);
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
-
+/*
+ * Archive cards sit on the same scale. They previously alternated left/right,
+ * which read as noise next to everything else moving straight up. Travel stays
+ * on `translate` so it composes with each card's scrapbook tilt rather than
+ * overwriting it.
+ */
 .motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
-  filter: blur(3px);
+  filter: blur(var(--enter-blur));
   opacity: 0;
-  translate: var(--archive-reveal-x, 0) 24px;
+  translate: 0 var(--rise-media);
 }
 
 .motionReady .chapterVisible .archiveMemoirCard {
-  animation: archiveMemoryIn 1.05s cubic-bezier(.16, 1, .3, 1) both;
-  animation-delay: calc(.28s + var(--archive-index) * .08s);
-}
-
-.archiveMemoirCard:nth-child(odd) {
-  --archive-reveal-x: -12px;
-}
-
-.archiveMemoirCard:nth-child(even) {
-  --archive-reveal-x: 12px;
+  animation: archiveMemoryIn var(--enter-lg) var(--ease-out) both;
+  animation-delay: calc(var(--step) * 2 + var(--archive-index) * var(--step));
 }
 
 @keyframes archiveMemoryIn {
   from {
-    filter: blur(3px);
+    filter: blur(var(--enter-blur));
     opacity: 0;
-    translate: var(--archive-reveal-x, 0) 24px;
+    translate: 0 var(--rise-media);
   }
   to {
     filter: blur(0);
@@ -5855,27 +5883,29 @@
 
 .archiveMemoirPhoto img {
   transition:
-    filter 1s ease,
-    transform 1.2s cubic-bezier(.16, 1, .3, 1);
+    filter var(--hover-slow) ease,
+    transform var(--hover-slow) var(--ease-out);
 }
 
+/* The modal's copy uses the same step as every other cascade on the page. */
 .memoirModalCopy > * {
-  animation: memoirCopyIn .68s .22s cubic-bezier(.16, 1, .3, 1) both;
+  animation: memoirCopyIn var(--enter) var(--ease-out) both;
+  animation-delay: calc(var(--step) * 3);
 }
 
-.memoirModalCopy > :nth-child(2) { animation-delay: .29s; }
-.memoirModalCopy > :nth-child(3) { animation-delay: .36s; }
-.memoirModalCopy > :nth-child(4) { animation-delay: .43s; }
-.memoirModalCopy > :nth-child(5) { animation-delay: .5s; }
+.memoirModalCopy > :nth-child(2) { animation-delay: calc(var(--step) * 4); }
+.memoirModalCopy > :nth-child(3) { animation-delay: calc(var(--step) * 5); }
+.memoirModalCopy > :nth-child(4) { animation-delay: calc(var(--step) * 6); }
+.memoirModalCopy > :nth-child(5) { animation-delay: calc(var(--step) * 7); }
 
 @keyframes memoirCopyIn {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    translate: 0 12px;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 }
 
@@ -5885,14 +5915,14 @@
 }
 
 :global(::view-transition-group(*)) {
-  animation-duration: .8s;
-  animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+  animation-duration: .55s;
+  animation-timing-function: var(--ease-out);
 }
 
 .researchPoster > a {
   transition:
-    box-shadow .82s cubic-bezier(.16, 1, .3, 1),
-    transform .82s cubic-bezier(.16, 1, .3, 1);
+    box-shadow var(--hover-slow) var(--ease-out),
+    transform var(--hover-slow) var(--ease-out);
 }
 
 .storyHeadline h2,
@@ -5955,7 +5985,7 @@
 .researchPosterAction svg,
 .videoInfo small svg,
 .email > svg:last-child {
-  transition: transform .56s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
 .videoInfo small {
@@ -5974,27 +6004,32 @@
   content: '';
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .68s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover) var(--ease-out);
 }
 
+/*
+ * Switching press tabs is a response to a click, not an entrance, so it runs
+ * on the interaction scale. At .82s the panel was still settling long after
+ * the tab had visibly changed, which made the section feel unresponsive.
+ */
 .pressFeatureActive {
-  animation: pressReveal .82s cubic-bezier(.16, 1, .3, 1) both;
+  animation: pressReveal var(--hover-slow) var(--ease-out) both;
 }
 
 .pressFeatureActive .pressFeatureCopy {
-  animation: pressCopyIn .72s .14s cubic-bezier(.16, 1, .3, 1) both;
+  animation: pressCopyIn var(--hover-slow) var(--step) var(--ease-out) both;
 }
 
 @keyframes pressReveal {
   from {
-    filter: blur(5px);
+    filter: blur(var(--enter-blur));
     opacity: 0;
-    transform: translate3d(18px, 8px, 0) scale(.992);
+    translate: 0 12px;
   }
   to {
     filter: blur(0);
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    translate: 0 0;
   }
 }
 
@@ -6002,18 +6037,18 @@
   from {
     filter: blur(3px);
     opacity: 0;
-    transform: translate3d(0, 13px, 0);
+    translate: 0 10px;
   }
   to {
     filter: blur(0);
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    translate: 0 0;
   }
 }
 
 .email {
   position: relative;
-  transition: color .54s ease;
+  transition: color var(--hover) ease;
 }
 
 .email::after {
@@ -6026,7 +6061,7 @@
   content: '';
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .74s cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--hover-slow) var(--ease-out);
 }
 
 .headerCta:active,
@@ -6085,7 +6120,7 @@
     background: rgba(25, 21, 18, .82);
     color: var(--paper);
     box-shadow: 0 0 0 7px rgba(215, 90, 78, .12);
-    animation: videoPlayResponse .48s cubic-bezier(.16, 1, .3, 1) both;
+    animation: videoPlayResponse .48s var(--ease-out) both;
   }
 
   .videoGrid a:hover .videoInfo small::after,
@@ -6122,21 +6157,25 @@
     animation: none !important;
   }
 
+  /*
+   * Reduced motion means gentler, not absent. Travel and blur go away — those
+   * are the parts that cause trouble — but the fade stays, so the page still
+   * reads as arriving in sequence rather than snapping into place.
+   */
   .motionReady [data-chapter] [data-reveal],
+  .motionReady [data-chapter] [data-reveal-line],
   .motionReady [data-chapter]:not(.chapterVisible) .archiveMemoirCard {
     clip-path: none;
     filter: none;
-    opacity: 1;
-    transform: none;
     translate: none;
-    transition: none;
+    transition: opacity var(--enter) linear;
+    transition-delay: var(--enter-delay, 0ms);
   }
 
-  .motionReady [data-chapter] [data-reveal='heading'] [data-reveal-line] {
-    filter: none;
+  .motionReady .chapterVisible [data-reveal],
+  .motionReady .chapterVisible [data-reveal-line],
+  .motionReady .chapterVisible .archiveMemoirCard {
     opacity: 1;
-    transform: none;
-    transition: none;
   }
 
   .scrollProgress {

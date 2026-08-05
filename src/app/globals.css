@@ -1,5 +1,13 @@
 :root {
   color-scheme: light;
+
+  /*
+   * Motion curves. Two curves for the whole site: one for things arriving,
+   * one for things responding to a pointer. Declared here rather than in the
+   * page module so the view-transition pseudo-elements can reach them too.
+   */
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+  --ease-quick: cubic-bezier(.32, .72, 0, 1);
 }
 
 html {

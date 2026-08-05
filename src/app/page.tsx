@@ -80,6 +80,11 @@ const formatEngagementDate = (date: string) => {
   return `${day}.${month}.${year.slice(2)}`
 }
 
+// Kept in step with `--step` in page.module.css. One unit for every stagger on
+// the page; the cap stops tall sections trailing on after the eye has moved.
+const CASCADE_STEP_MS = 70
+const MAX_CASCADE_STEPS = 7
+
 const navItems = [
   { href: '#story', label: 'About' },
   { href: '#practice', label: 'Approach' },
@@ -411,18 +416,32 @@ export default function InkResonancePage() {
     const chapters = Array.from(root.querySelectorAll<HTMLElement>('[data-chapter]'))
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+    // One cascade per chapter, in document order, so a heading's lines and the
+    // copy beneath them sit on the same rhythm instead of running two
+    // overlapping ones. The heading element itself is only a wrapper — its
+    // lines take its place in the sequence.
     chapters.forEach((chapter) => {
-      Array.from(chapter.querySelectorAll<HTMLElement>('[data-reveal]')).forEach((element, index) => {
-        element.style.setProperty('--reveal-delay', `${Math.min(index, 6) * 65}ms`)
-      })
-      chapter.querySelectorAll<HTMLElement>("[data-reveal='heading']").forEach((heading) => {
-        Array.from(heading.querySelectorAll<HTMLElement>('[data-reveal-line]')).forEach((line, index) => {
-          line.style.setProperty('--line-delay', `${index * 100}ms`)
+      let step = 0
+
+      chapter
+        .querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-line]')
+        .forEach((element) => {
+          if (element.matches("[data-reveal='heading']")) return
+          element.style.setProperty(
+            '--enter-delay',
+            `${Math.min(step, MAX_CASCADE_STEPS) * CASCADE_STEP_MS}ms`,
+          )
+          step += 1
         })
-      })
     })
 
-    root.classList.add(styles.motionReady)
+    // Commit the hidden state with transitions switched off, then release them
+    // on the next frame so nothing animates on the way *into* hiding.
+    root.classList.add(styles.motionBoot, styles.motionReady)
+    void root.offsetWidth
+    const bootFrame = window.requestAnimationFrame(() => {
+      root.classList.remove(styles.motionBoot)
+    })
 
     const revealHashChapter = () => {
       const hash = window.location.hash.slice(1)
@@ -434,7 +453,10 @@ export default function InkResonancePage() {
 
     if (prefersReducedMotion || !('IntersectionObserver' in window)) {
       chapters.forEach((chapter) => chapter.classList.add(styles.chapterVisible))
-      return () => window.removeEventListener('hashchange', revealHashChapter)
+      return () => {
+        window.cancelAnimationFrame(bootFrame)
+        window.removeEventListener('hashchange', revealHashChapter)
+      }
     }
 
     const revealObserver = new IntersectionObserver(
@@ -451,6 +473,7 @@ export default function InkResonancePage() {
     chapters.forEach((chapter) => revealObserver.observe(chapter))
 
     return () => {
+      window.cancelAnimationFrame(bootFrame)
       revealObserver.disconnect()
       window.removeEventListener('hashchange', revealHashChapter)
     }
@@ -848,7 +871,7 @@ export default function InkResonancePage() {
             <p>POSITION / STORY</p>
           </div>
           <div className={styles.storyHeadline} data-reveal="heading">
-            <span>My practice</span>
+            <span data-reveal-line>My practice</span>
             <h2 data-reveal-line>Music is not an object to preserve.</h2>
             <h2 data-reveal-line><em>It is a place to meet.</em></h2>
           </div>
@@ -1034,7 +1057,7 @@ export default function InkResonancePage() {
               <p>PERFORMANCE VIDEOS</p>
             </div>
             <div data-reveal="heading">
-              <span>Selected by the artist</span>
+              <span data-reveal-line>Selected by the artist</span>
               <h2>
                 <span data-reveal-line>Watch the music</span>
                 <em data-reveal-line>in motion.</em>
