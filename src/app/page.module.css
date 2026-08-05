@@ -507,12 +507,19 @@
   padding: 6vw 5vw;
 }
 
+/*
+ * This heading sits in the narrow left column, so both lines wrap at every
+ * desktop width. Cormorant's ink measures about 1.03em tall, so a line-height
+ * below that makes a wrapped line collide with the one beneath it — the
+ * descender of "practice." landing on the "T" of "Three". 1.06 is the tightest
+ * setting that still clears the font's own extenders.
+ */
 .practiceIntro h2 {
   margin: 65px 0 25px;
   font-family: var(--font-display, Georgia), Georgia, serif;
   font-size: clamp(2.8125rem, 4.6vw, 4.625rem);
   font-weight: 400;
-  line-height: .93;
+  line-height: 1.06;
   letter-spacing: -.045em;
 }
 
@@ -4885,12 +4892,13 @@
 
   .practiceIntro {
     min-height: 0;
-    padding: 70px 22px 58px;
+    padding: 56px 22px 46px;
   }
 
+  /* Line-height comes from the base rule; this only trims size and spacing. */
   .practiceIntro h2 {
-    margin: 46px 0 22px;
-    font-size: clamp(2.875rem, 13vw, 3.625rem);
+    margin: 32px 0 18px;
+    font-size: clamp(2.5rem, 11.6vw, 3.25rem);
   }
 
   .practiceGrid article {
@@ -4898,7 +4906,7 @@
     justify-content: flex-start;
     border-right: 0;
     border-bottom: 1px solid rgba(31, 28, 24, .16);
-    padding: 34px 22px 42px;
+    padding: 28px 22px 34px;
   }
 
   .practiceGrid article:last-child {
@@ -4908,24 +4916,34 @@
   .practiceNumber {
     position: static;
     order: 0;
-    margin-bottom: 38px;
+    margin-bottom: 14px;
   }
 
+  /*
+   * The icon moves into the corner rather than sitting in the stack. On
+   * desktop it is a mid-card anchor with room around it; stacked on a phone it
+   * was costing a line of height per card and buying nothing.
+   */
   .practiceGrid article > svg {
-    position: static;
-    order: 1;
-    margin-bottom: 18px;
+    position: absolute;
+    top: 24px;
+    right: 22px;
+    left: auto;
+    width: 26px;
+    height: 26px;
+    margin-bottom: 0;
   }
 
   .practiceGrid h3 {
     order: 2;
-    margin-bottom: 12px;
-    font-size: 2.125rem;
+    margin-bottom: 10px;
+    font-size: 1.875rem;
   }
 
   .practiceGrid article > p {
     min-height: 0;
     order: 3;
+    line-height: 1.65;
   }
 
   .practiceGrid a {
@@ -4933,7 +4951,7 @@
     min-height: 44px;
     align-items: center;
     order: 4;
-    margin-top: 25px;
+    margin-top: 16px;
     font-size: 0.6875rem;
   }
 
